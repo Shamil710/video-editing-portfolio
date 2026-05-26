@@ -219,6 +219,45 @@ button {
   }
 }
 
+@keyframes ambient-gold-drift {
+  0%,
+  100% {
+    transform: scale(1) translate3d(0, 0, 0);
+    filter: saturate(1);
+  }
+
+  50% {
+    transform: scale(1.03) translate3d(0, -0.8%, 0);
+    filter: saturate(1.08);
+  }
+}
+
+.gold-ambient-drift {
+  animation: ambient-gold-drift 14s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+.cinematic-grain-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg_viewBox=%220_0_256_256%22_xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter_id=%22n%22%3E%3CfeTurbulence_type=%22fractalNoise%22_baseFrequency=%220.86%22_numOctaves=%223%22_stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect_width=%22256%22_height=%22256%22_filter=%22url(%23n%22%29_opacity=%220.72%22/%3E%3C/svg%3E");
+}
+
+.cinematic-vignette-soft {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+}
+
 .group:hover .marquee-track {
   animation-play-state: paused;
 }

@@ -134,35 +134,41 @@ export function RecentWorksSection() {
     setActiveIndex((current) => (current + 1) % reels.length);
 
   return (
-    <div className="space-y-6 text-white sm:space-y-8">
+    <div className="space-y-8 text-white sm:space-y-10">
       <motion.div
-        className="max-w-3xl space-y-3"
+        className="max-w-4xl space-y-4"
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="inline-flex items-center gap-2 rounded-full border border-bullion/22 bg-bullion/[0.08] px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-champagne">
+        <div className="inline-flex items-center gap-2 border-b border-bullion/30 pb-2 text-[0.56rem] font-semibold uppercase tracking-[0.32em] text-champagne/92">
           <Sparkles size={12} />
           cinematic reel showcase
         </div>
-        <h2 className="font-display max-w-xl text-[clamp(1.6rem,3vw,2.6rem)] font-semibold leading-tight tracking-[-0.03em] text-white">
-          Luxury motion storytelling with a single vertical reel at the center.
+        <h2 className="font-display max-w-[14ch] text-[clamp(1.9rem,3.6vw,3.9rem)] font-semibold leading-[0.88] tracking-[-0.065em] text-white">
+          A premium reel stage with editorial motion depth.
         </h2>
-        <p className="max-w-2xl text-sm leading-8 text-white/66 sm:text-base">
+        <p className="max-w-3xl text-sm leading-8 text-white/64 sm:text-base">
           A minimal Awwwards-style composition built for premium editing work:
           one hero reel, two soft previews, and a compact metadata panel.
         </p>
       </motion.div>
 
       <div className="relative overflow-visible">
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[2rem]">
-          <div className="absolute left-1/2 top-[48%] h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bullion/12 blur-[110px]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,255,255,0.07),transparent_32%),radial-gradient(circle_at_50%_72%,rgba(212,175,55,0.08),transparent_28%)] opacity-70" />
-          <div className="absolute inset-0 opacity-[0.12] [background-image:radial-gradient(rgba(255,255,255,0.55)_0.7px,transparent_0.7px)] [background-size:14px_14px]" />
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[2.2rem]">
+          <motion.div
+            className="absolute left-1/2 top-[50%] h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bullion/12 blur-[120px]"
+            animate={{ opacity: [0.45, 0.75, 0.45], scale: [0.96, 1.04, 0.96] }}
+            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <div className="absolute left-[12%] top-[18%] h-44 w-44 rounded-full bg-bullion/12 blur-3xl" />
+          <div className="absolute right-[14%] top-[26%] h-40 w-40 rounded-full bg-champagne/9 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,255,255,0.04),transparent_32%),radial-gradient(circle_at_50%_72%,rgba(212,175,55,0.08),transparent_28%)] opacity-80" />
+          <div className="absolute inset-0 opacity-[0.08] [background-image:radial-gradient(rgba(255,255,255,0.45)_0.7px,transparent_0.7px)] [background-size:14px_14px]" />
         </div>
 
-        <div className="showcase-track grid items-center gap-5 xl:grid-cols-[0.9fr_minmax(320px,360px)_0.9fr] xl:gap-7">
+        <div className="showcase-track grid items-center gap-6 xl:grid-cols-[0.86fr_minmax(320px,360px)_0.92fr] xl:gap-8">
           <PreviewReelCard
             position="left"
             reel={reels[previousIndex]}
@@ -208,17 +214,18 @@ function PreviewReelCard({
       initial={{ opacity: 0, x: isLeft ? -22 : 22 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      whileHover={{ scale: 0.96, y: -2 }}
+      whileHover={{ scale: 0.97, y: -3 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       animate={{
-        opacity: 0.55,
+        opacity: 0.58,
         scale: 0.9,
         filter: "blur(1px)",
         translateY: 6,
       }}
     >
-      <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-black/60 shadow-[0_16px_44px_rgba(0,0,0,0.34)] transition duration-500">
+      <div className="absolute -inset-4 rounded-[26px] bg-[radial-gradient(circle_at_50%_30%,rgba(212,175,55,0.2),transparent_64%)] opacity-40 blur-2xl" />
+      <div className="relative overflow-hidden rounded-[24px] border border-white/8 bg-[#050505]/68 shadow-[0_22px_62px_rgba(0,0,0,0.55)] backdrop-blur-xl transition duration-500 group-hover:border-bullion/22">
         <ReelVisual
           reel={reel}
           poster={poster}
@@ -226,12 +233,12 @@ function PreviewReelCard({
           showVideo={false}
           size="preview"
         />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.06),rgba(0,0,0,0.48))]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.55))]" />
         <div className="absolute inset-x-0 bottom-0 p-4">
-          <p className="text-[0.52rem] font-semibold uppercase tracking-[0.24em] text-white/48">
+          <p className="text-[0.5rem] font-semibold uppercase tracking-[0.28em] text-white/44">
             {reel.category}
           </p>
-          <h3 className="mt-2 text-sm font-semibold tracking-[-0.03em] text-white/90">
+          <h3 className="mt-2 text-sm font-semibold tracking-[-0.03em] text-white/92">
             {reel.title}
           </h3>
         </div>
@@ -260,9 +267,14 @@ function FeaturedReelCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="pointer-events-none absolute -inset-6 rounded-[30px] bg-[radial-gradient(circle_at_50%_18%,rgba(212,175,55,0.22),transparent_42%)] blur-3xl" />
+      <motion.div
+        className="pointer-events-none absolute -inset-7 rounded-[32px] bg-[radial-gradient(circle_at_50%_18%,rgba(212,175,55,0.28),transparent_44%)] blur-3xl"
+        animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.98, 1.03, 0.98] }}
+        transition={{ duration: 9.5, repeat: Infinity, ease: "easeInOut" }}
+      />
       <div className="relative overflow-visible rounded-[30px]">
-        <div className="mx-auto relative overflow-hidden rounded-[26px] border border-bullion/30 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
+        <div className="absolute inset-0 z-0 rounded-[28px] border border-bullion/26 shadow-[0_0_40px_rgba(212,175,55,0.18)]" />
+        <div className="mx-auto relative overflow-hidden rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.032),rgba(255,255,255,0.008))] shadow-[0_52px_140px_rgba(0,0,0,0.72)] backdrop-blur-xl">
           <div
             className="absolute inset-0 z-[1]"
             style={{
@@ -280,11 +292,11 @@ function FeaturedReelCard({
 
           <div className="pointer-events-none absolute inset-0 z-[4] bg-[linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.28))]" />
 
-          <div className="absolute left-3 top-3 z-[6] inline-flex items-center gap-2 rounded-full border border-bullion/22 bg-black/40 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-champagne backdrop-blur-xl">
+          <div className="absolute left-3 top-3 z-[6] inline-flex items-center gap-2 rounded-full border border-bullion/24 bg-black/38 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.22em] text-champagne backdrop-blur-xl">
             Featured
           </div>
 
-          <div className="absolute bottom-3 left-3 z-[6] rounded-full border border-white/12 bg-black/45 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-white/76 backdrop-blur-xl">
+          <div className="absolute bottom-3 left-3 z-[6] rounded-full border border-bullion/16 bg-black/46 px-3 py-1 text-[0.5rem] font-semibold uppercase tracking-[0.24em] text-white/76 backdrop-blur-xl">
             {reel.duration}
           </div>
         </div>
@@ -304,7 +316,7 @@ function DetailPanel({
 }) {
   return (
     <motion.aside
-      className="detail-panel mx-auto w-full max-w-[290px] rounded-[22px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] p-5 shadow-[0_18px_46px_rgba(0,0,0,0.24)] backdrop-blur-xl"
+      className="detail-panel mx-auto w-full max-w-[305px] rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(8,8,8,0.82),rgba(12,12,12,0.72))] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.56)] backdrop-blur-2xl"
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.18 }}
@@ -313,14 +325,14 @@ function DetailPanel({
       layout
     >
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.52rem] font-semibold uppercase tracking-[0.28em] text-white/40">
-          Detail
+        <p className="text-[0.5rem] font-semibold uppercase tracking-[0.34em] text-white/42">
+          Editorial Notes
         </p>
         <div className="flex items-center gap-2">
           <motion.button
             type="button"
             onClick={onPrevious}
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/78 transition duration-300 hover:border-bullion/25 hover:text-white"
+            className="grid h-9 w-9 place-items-center rounded-full border border-bullion/14 bg-white/[0.02] text-white/78 transition duration-500 hover:border-bullion/35 hover:bg-bullion/10 hover:text-white"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -329,7 +341,7 @@ function DetailPanel({
           <motion.button
             type="button"
             onClick={onNext}
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/78 transition duration-300 hover:border-bullion/25 hover:text-white"
+            className="grid h-9 w-9 place-items-center rounded-full border border-bullion/14 bg-white/[0.02] text-white/78 transition duration-500 hover:border-bullion/35 hover:bg-bullion/10 hover:text-white"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -338,21 +350,21 @@ function DetailPanel({
         </div>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 space-y-5">
         <div>
-          <p className="text-[0.54rem] font-semibold uppercase tracking-[0.26em] text-white/40">
+          <p className="text-[0.52rem] font-semibold uppercase tracking-[0.3em] text-white/38">
             {reel.category}
           </p>
-          <h3 className="mt-3 font-display text-[clamp(1.7rem,2.5vw,2.75rem)] font-semibold tracking-[-0.05em] text-white">
+          <h3 className="mt-3 font-display text-[clamp(1.7rem,2.5vw,2.8rem)] font-semibold leading-[0.92] tracking-[-0.05em] text-white">
             {reel.title}
           </h3>
         </div>
 
-        <p className="max-w-sm text-sm leading-7 text-white/64">
+        <p className="max-w-sm text-sm leading-7 text-white/62">
           {reel.summary}
         </p>
 
-        <div className="space-y-2 pt-1 text-[0.54rem] font-semibold uppercase tracking-[0.2em] text-white/42">
+        <div className="space-y-2 border-y border-white/6 py-3 text-[0.54rem] font-semibold uppercase tracking-[0.22em] text-white/44">
           <div className="flex items-center gap-3">
             <span className="h-px flex-1 bg-white/10" />
             {reel.duration}
@@ -363,7 +375,7 @@ function DetailPanel({
           <div>Editorial transitions</div>
         </div>
 
-        <button className="mt-2 inline-flex items-center gap-2 rounded-full border border-bullion/22 bg-bullion/10 px-4 py-2 text-[0.56rem] font-semibold uppercase tracking-[0.24em] text-champagne transition duration-300 hover:bg-bullion/14">
+        <button className="mt-2 inline-flex items-center gap-2 rounded-full border border-bullion/26 bg-bullion/10 px-4 py-2 text-[0.56rem] font-semibold uppercase tracking-[0.24em] text-champagne transition duration-500 hover:-translate-y-0.5 hover:bg-bullion/20 hover:shadow-[0_16px_36px_rgba(212,175,55,0.2)]">
           <Play size={11} fill="currentColor" />
           View reel
         </button>

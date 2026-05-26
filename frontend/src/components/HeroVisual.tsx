@@ -96,7 +96,7 @@ export function HeroVisual() {
           animate={{ y: [0, -8, 0], rotate: -12, opacity: [0.22, 0.34, 0.22] }}
           transition={{ duration: 12.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="relative overflow-hidden rounded-[1.9rem] border border-white/8 bg-black/54 shadow-[0_22px_68px_rgba(0,0,0,0.34)]">
+          <div className="relative overflow-hidden rounded-[1.9rem] border border-bullion/12 bg-black/70 shadow-[0_22px_68px_rgba(0,0,0,0.34)]">
             <video
               ref={backgroundVideoRef}
               src={sequenceEleven}
@@ -108,7 +108,7 @@ export function HeroVisual() {
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.62))]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(212,175,55,0.1),transparent_38%)]" />
-            <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/44 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-white/72 backdrop-blur-xl">
+            <div className="absolute left-4 top-4 rounded-full border border-bullion/16 bg-black/48 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.18em] text-white/72 backdrop-blur-xl">
               Background reel
             </div>
           </div>
@@ -141,7 +141,7 @@ export function HeroVisual() {
               Premium reel
             </div>
 
-            <div className="absolute bottom-4 left-4 right-4 rounded-full border border-white/10 bg-black/44 px-4 py-3 backdrop-blur-xl">
+            <div className="absolute bottom-4 left-4 right-4 rounded-full border border-bullion/16 bg-black/50 px-4 py-3 backdrop-blur-xl">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-[0.52rem] font-semibold uppercase tracking-[0.26em] text-white/42">
@@ -151,7 +151,7 @@ export function HeroVisual() {
                     Retention-focused edit system
                   </p>
                 </div>
-                <span className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.05] text-champagne shadow-[0_0_22px_rgba(212,175,55,0.14)]">
+                <span className="grid h-10 w-10 place-items-center rounded-full border border-bullion/16 bg-white/[0.04] text-champagne shadow-[0_0_22px_rgba(212,175,55,0.14)]">
                   <Play size={16} fill="currentColor" />
                 </span>
               </div>

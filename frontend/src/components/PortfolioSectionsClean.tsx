@@ -3,8 +3,39 @@ import { RecentWorksSection } from "./RecentWorksSection";
 import portrait from "../images/ChatGPT Image May 25, 2026, 11_32_07 PM.png";
 
 export function PortfolioSectionsClean() {
+  const pricingPlans = [
+    {
+      name: "Signature Cut",
+      cadence: "Per project",
+      price: "$240",
+      note: "For one polished reel with cinematic pacing and premium delivery.",
+      deliverables: ["1 vertical reel", "Color + sound polish", "2 revisions"],
+      featured: false,
+    },
+    {
+      name: "Studio Retainer",
+      cadence: "Monthly",
+      price: "$920",
+      note: "Ongoing editing partnership for consistent creator output.",
+      deliverables: [
+        "6-8 reels / month",
+        "Priority turnaround",
+        "Creative direction",
+      ],
+      featured: true,
+    },
+    {
+      name: "Campaign Story",
+      cadence: "Per campaign",
+      price: "$1.4k",
+      note: "Narrative-focused motion package for launches and brand films.",
+      deliverables: ["3 hero edits", "Hook strategy pass", "Delivery variants"],
+      featured: false,
+    },
+  ] as const;
+
   return (
-    <div className="w-full space-y-16 py-10 sm:space-y-20 sm:py-12">
+    <div className="w-full py-8 sm:py-10">
       <section
         id="about"
         className="about-cinematic-section relative w-screen overflow-hidden bg-[#050505]"
@@ -127,48 +158,253 @@ export function PortfolioSectionsClean() {
         </motion.div>
       </section>
 
-      <section id="works">
-        <div className="relative z-20 rounded-2xl bg-white/[0.02] p-6 sm:p-10">
+      <section
+        id="works"
+        className="relative overflow-hidden bg-[#050505] px-4 py-[clamp(5.5rem,8vw,8rem)] sm:px-8 lg:px-12"
+      >
+        <SectionAtmosphere tone="warm" />
+        <div className="cinematic-grain-overlay" aria-hidden="true" />
+
+        <div className="relative z-10 mx-auto w-full max-w-[1450px]">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-10 sm:mb-12"
+          >
+            <p className="text-[0.56rem] font-semibold uppercase tracking-[0.38em] text-champagne/90">
+              SHOWCASE
+            </p>
+            <h2 className="mt-4 max-w-[13ch] font-display text-[clamp(2.2rem,4.4vw,5.6rem)] font-semibold leading-[0.85] tracking-[-0.08em] text-white">
+              Cinematic <span className="gold-gradient-text">works</span> in one
+              flowing studio scene.
+            </h2>
+          </motion.div>
+
           <RecentWorksSection />
         </div>
       </section>
 
-      <section id="pricing">
-        <div className="relative z-20 rounded-2xl bg-white/[0.02] p-6 sm:p-10">
+      <section
+        id="showcase"
+        className="relative overflow-hidden bg-[#050505] px-4 pb-[clamp(4.5rem,7vw,7rem)] pt-6 sm:px-8 lg:px-12"
+      >
+        <SectionAtmosphere tone="neutral" />
+        <div
+          className="cinematic-grain-overlay opacity-[0.07]"
+          aria-hidden="true"
+        />
+
+        <div className="relative z-10 mx-auto grid w-full max-w-[1450px] gap-8 lg:grid-cols-[0.65fr_1fr] lg:gap-10">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl space-y-4"
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-4"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-bullion/22 bg-bullion/[0.06] px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-champagne">
-              pricing
-            </div>
-            <h2 className="font-display text-3xl font-semibold">Pricing</h2>
-            <p className="text-white/70">
-              Project-based and retainer options available.
+            <p className="text-[0.54rem] font-semibold uppercase tracking-[0.36em] text-white/46">
+              POST FLOW
             </p>
+            <h3 className="max-w-[12ch] font-display text-[clamp(1.8rem,3vw,3.8rem)] font-semibold leading-[0.9] tracking-[-0.06em] text-white">
+              Built like a luxury
+              <br />
+              <span className="gold-gradient-text">editing suite</span>.
+            </h3>
+            <p className="max-w-[30ch] text-sm leading-8 text-white/62 sm:text-[0.96rem]">
+              Every reel moves through the same refined sequence so visuals,
+              pacing, and tone stay cinematic from first hook to final export.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+            className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(145deg,rgba(255,255,255,0.045),rgba(255,255,255,0.01))] px-6 py-7 shadow-[0_30px_90px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:px-8 sm:py-9"
+          >
+            <div className="pointer-events-none absolute -left-10 top-[-5rem] h-56 w-56 rounded-full bg-bullion/15 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-[-6rem] right-[-2rem] h-56 w-56 rounded-full bg-champagne/8 blur-3xl" />
+            <div className="relative grid gap-5 sm:grid-cols-3">
+              {[
+                [
+                  "01",
+                  "Story Outline",
+                  "Intent-first framing and emotional arc.",
+                ],
+                [
+                  "02",
+                  "Motion Sculpt",
+                  "Shot rhythm, transitions, and timing polish.",
+                ],
+                [
+                  "03",
+                  "Luxury Finish",
+                  "Color, sound texture, and final delivery.",
+                ],
+              ].map(([index, title, text]) => (
+                <div
+                  key={title}
+                  className="rounded-2xl border border-white/6 bg-black/30 p-5"
+                >
+                  <p className="text-[0.54rem] font-semibold uppercase tracking-[0.34em] text-champagne/88">
+                    {index}
+                  </p>
+                  <h4 className="mt-3 font-display text-[1.2rem] font-semibold tracking-[-0.03em] text-white">
+                    {title}
+                  </h4>
+                  <p className="mt-3 text-sm leading-7 text-white/62">{text}</p>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
 
-      <section id="contact">
-        <div className="relative z-20 rounded-2xl bg-white/[0.02] p-6 sm:p-10">
+      <section
+        id="pricing"
+        className="relative overflow-hidden bg-[#050505] px-4 py-[clamp(5rem,7vw,7rem)] sm:px-8 lg:px-12"
+      >
+        <SectionAtmosphere tone="focused" />
+        <div
+          className="cinematic-grain-overlay opacity-[0.08]"
+          aria-hidden="true"
+        />
+
+        <div className="relative z-10 mx-auto w-full max-w-[1450px]">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl space-y-4"
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.66, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-3xl space-y-5"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-bullion/22 bg-bullion/[0.06] px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-champagne">
-              contact
+            <div className="inline-flex items-center border-b border-bullion/35 pb-2 text-[0.56rem] font-semibold uppercase tracking-[0.34em] text-champagne/92">
+              pricing
             </div>
-            <h2 className="font-display text-3xl font-semibold">Contact</h2>
-            <p className="text-white/70">
-              Email: hello@robind.dev — Available for new projects.
+            <h2 className="max-w-[11ch] font-display text-[clamp(2.2rem,4vw,5rem)] font-semibold leading-[0.86] tracking-[-0.07em] text-white">
+              Studio pricing for premium storytelling.
+            </h2>
+            <p className="max-w-[54ch] text-sm leading-8 text-white/64 sm:text-base">
+              Built for creators and brands that want consistent cinematic
+              quality, faster delivery, and a stronger editorial signature.
             </p>
+          </motion.div>
+
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {pricingPlans.map((plan, index) => (
+              <motion.article
+                key={plan.name}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{
+                  duration: 0.65,
+                  ease: [0.22, 1, 0.36, 1],
+                  delay: index * 0.08,
+                }}
+                className={`relative overflow-hidden rounded-[2rem] p-6 sm:p-7 ${
+                  plan.featured
+                    ? "border border-bullion/38 bg-[linear-gradient(145deg,rgba(255,250,235,0.06),rgba(5,5,5,0.5))] shadow-[0_30px_90px_rgba(0,0,0,0.6)]"
+                    : "border border-white/6 bg-[linear-gradient(145deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))]"
+                }`}
+              >
+                {plan.featured ? (
+                  <>
+                    <div className="pointer-events-none absolute left-1/2 top-[8%] h-44 w-44 -translate-x-1/2 rounded-full bg-bullion/25 blur-3xl" />
+                    <div className="absolute right-6 top-6 rounded-full border border-bullion/32 bg-bullion/12 px-3 py-1 text-[0.5rem] font-semibold uppercase tracking-[0.28em] text-champagne">
+                      featured
+                    </div>
+                  </>
+                ) : null}
+
+                <div className="relative z-10">
+                  <p className="text-[0.54rem] font-semibold uppercase tracking-[0.32em] text-white/42">
+                    {plan.cadence}
+                  </p>
+                  <h3 className="mt-4 font-display text-[1.8rem] font-semibold tracking-[-0.05em] text-white sm:text-[2rem]">
+                    {plan.name}
+                  </h3>
+                  <p className="mt-4 text-[2.3rem] font-semibold leading-none tracking-[-0.04em] text-champagne sm:text-[2.8rem]">
+                    {plan.price}
+                  </p>
+                  <p className="mt-4 text-sm leading-7 text-white/62">
+                    {plan.note}
+                  </p>
+
+                  <div className="mt-6 space-y-2 text-[0.6rem] font-semibold uppercase tracking-[0.26em] text-white/56">
+                    {plan.deliverables.map((deliverable) => (
+                      <p key={deliverable}>{deliverable}</p>
+                    ))}
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="contact"
+        className="relative overflow-hidden bg-[#050505] px-4 pb-[clamp(6rem,10vw,9rem)] pt-[clamp(5rem,8vw,7rem)] sm:px-8 lg:px-12"
+      >
+        <SectionAtmosphere tone="finale" />
+        <div
+          className="cinematic-grain-overlay opacity-[0.09]"
+          aria-hidden="true"
+        />
+        <div className="cinematic-vignette-soft" aria-hidden="true" />
+
+        <div className="relative z-10 mx-auto max-w-[1450px]">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative overflow-hidden rounded-[2.2rem] border border-white/7 bg-[linear-gradient(145deg,rgba(255,255,255,0.03),rgba(255,255,255,0.008))] px-6 py-8 shadow-[0_36px_95px_rgba(0,0,0,0.65)] backdrop-blur-2xl sm:px-10 sm:py-11"
+          >
+            <div className="pointer-events-none absolute left-[10%] top-[-5rem] h-52 w-52 rounded-full bg-bullion/18 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-[-6rem] right-[8%] h-60 w-60 rounded-full bg-champagne/10 blur-3xl" />
+
+            <div className="relative z-10 max-w-4xl space-y-6">
+              <div className="inline-flex items-center border-b border-bullion/35 pb-2 text-[0.56rem] font-semibold uppercase tracking-[0.34em] text-champagne/95">
+                contact
+              </div>
+
+              <h2 className="max-w-[12ch] font-display text-[clamp(2.5rem,5vw,6.2rem)] font-semibold leading-[0.84] tracking-[-0.08em] text-white">
+                Let&apos;s craft a
+                <br />
+                <span className="gold-gradient-text">cinematic final cut</span>.
+              </h2>
+
+              <p className="max-w-[58ch] text-sm leading-8 text-white/66 sm:text-base">
+                Available for creator retainers, campaign launches, and premium
+                short-form editing collaborations.
+              </p>
+
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
+                <a
+                  href="mailto:hello@robind.dev"
+                  className="group inline-flex items-center justify-center rounded-full bg-gradient-to-r from-bullion via-[#f2dc8a] to-champagne px-7 py-4 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-black shadow-[0_20px_46px_rgba(212,175,55,0.22)] transition duration-500 hover:-translate-y-0.5 hover:shadow-[0_26px_62px_rgba(212,175,55,0.32)]"
+                >
+                  Start a project
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group inline-flex items-center justify-center rounded-full border border-bullion/28 bg-black/30 px-7 py-4 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-champagne transition duration-500 hover:border-champagne/55 hover:bg-bullion/12 hover:shadow-[0_18px_48px_rgba(212,175,55,0.18)]"
+                >
+                  Instagram
+                </a>
+              </div>
+
+              <p className="pt-3 text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-white/44">
+                hello@robind.dev • accepting june bookings
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -222,6 +458,34 @@ function WorkflowStrip() {
         </div>
       ))}
     </div>
+  );
+}
+
+function SectionAtmosphere({
+  tone,
+}: {
+  tone: "warm" | "neutral" | "focused" | "finale";
+}) {
+  const toneClass =
+    tone === "warm"
+      ? "bg-[radial-gradient(circle_at_20%_14%,rgba(212,175,55,0.13),transparent_34%),radial-gradient(circle_at_80%_56%,rgba(212,175,55,0.08),transparent_36%)]"
+      : tone === "focused"
+        ? "bg-[radial-gradient(circle_at_50%_18%,rgba(212,175,55,0.12),transparent_34%),radial-gradient(circle_at_14%_84%,rgba(212,175,55,0.06),transparent_34%)]"
+        : tone === "finale"
+          ? "bg-[radial-gradient(circle_at_48%_20%,rgba(224,195,106,0.14),transparent_38%),radial-gradient(circle_at_86%_76%,rgba(212,175,55,0.08),transparent_34%)]"
+          : "bg-[radial-gradient(circle_at_28%_28%,rgba(212,175,55,0.08),transparent_34%),radial-gradient(circle_at_74%_70%,rgba(224,195,106,0.06),transparent_36%)]";
+
+  return (
+    <>
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#050505_0%,#060606_46%,#050505_100%)]" />
+      <motion.div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 ${toneClass} gold-ambient-drift`}
+        animate={{ opacity: [0.78, 1, 0.78] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.06),transparent_25%,transparent_68%,rgba(0,0,0,0.78))]" />
+    </>
   );
 }
 
