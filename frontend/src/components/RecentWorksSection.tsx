@@ -1,6 +1,14 @@
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { ChevronLeft, ChevronRight, Play, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { MicOff, Volume2 } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type SyntheticEvent,
+} from "react";
+
 import firstReel from "../videos/First reel.mp4";
 import secondReel from "../videos/Second reel.mp4";
 import sequenceFiveReel from "../videos/Sequence 01_5.mp4";
@@ -11,663 +19,1060 @@ import img0553Reel from "../videos/IMG_0553.MP4";
 import divorceFinalReel from "../videos/divorce final.mp4";
 import dhanushReel from "../videos/dhanush final.mp4";
 
+export const WORKS_VISIBILITY_EVENT = "works-viewport-change";
+
 type ReelItem = {
   id: string;
   title: string;
   category: string;
-  summary: string;
   duration: string;
-  video: string;
-  accent: [string, string];
+  client: string;
+  note: string;
+  tags: string[];
+  src: string;
+  tone: string;
+  glow: string;
+  index: string;
 };
 
 const reels: ReelItem[] = [
   {
     id: "launch-cut",
     title: "Luxury Launch Cut",
-    category: "Brand promo",
-    summary:
-      "A crisp opening edit with elegant pacing and a polished luxury finish.",
-    duration: "38 sec",
-    video: firstReel,
-    accent: ["#f3d88c", "#81531a"],
+    category: "Brand Film",
+    duration: "0:38",
+    client: "Commercial storytelling",
+    note: "A crisp launch film with premium pacing and refined visual rhythm.",
+    tags: ["Motion", "Luxury", "Launch"],
+    src: firstReel,
+    tone: "#0d0b06",
+    glow: "#d4af37",
+    index: "01",
   },
   {
     id: "motion-story",
     title: "Motion Story Sequence",
-    category: "Creator campaign",
-    summary:
-      "A cleaner social-first cut built for retention, rhythm, and clarity.",
-    duration: "42 sec",
-    video: secondReel,
-    accent: ["#efd074", "#234562"],
+    category: "Editorial Cut",
+    duration: "0:42",
+    client: "Creator brand film",
+    note: "Cleaner social-first storytelling with stronger retention rhythm.",
+    tags: ["Story", "Retention", "Editorial"],
+    src: secondReel,
+    tone: "#090b0f",
+    glow: "#e2c56a",
+    index: "02",
   },
   {
     id: "after-dark",
     title: "After Dark Editorial",
-    category: "Fashion mood",
-    summary:
-      "High contrast, soft motion, and restrained grade work for editorial impact.",
-    duration: "36 sec",
-    video: sequenceFiveReel,
-    accent: ["#edd28a", "#5e3128"],
+    category: "Studio Motion",
+    duration: "0:36",
+    client: "Editorial motion systems",
+    note: "High contrast, restrained grade work, and a cinematic fashion mood.",
+    tags: ["Fashion", "Mood", "Film"],
+    src: sequenceFiveReel,
+    tone: "#080808",
+    glow: "#c89b2d",
+    index: "03",
   },
   {
     id: "pulse-nine",
     title: "Pulse Nine Cut",
-    category: "Transition reel",
-    summary:
-      "A rhythm-first sequence with smoother transitions and tighter movement.",
-    duration: "33 sec",
-    video: sequenceNineReel,
-    accent: ["#f2d57b", "#1f3f5a"],
+    category: "Commercial Reel",
+    duration: "0:33",
+    client: "Launch visuals",
+    note: "Rhythm-first motion with smoother transitions and tighter framing.",
+    tags: ["Studio", "Motion", "Flow"],
+    src: sequenceNineReel,
+    tone: "#0a0a0a",
+    glow: "#f0d98a",
+    index: "04",
   },
   {
     id: "rhythm-build",
     title: "Rhythm Build Cut",
-    category: "Product story",
-    summary:
-      "A compact story pass with premium timing and an elevated visual pulse.",
-    duration: "29 sec",
-    video: sequenceTenReel,
-    accent: ["#f2da8d", "#11374d"],
+    category: "Brand Film",
+    duration: "0:29",
+    client: "Premium creators",
+    note: "Compact story pacing with a polished visual pulse.",
+    tags: ["Product", "Story", "Commercial"],
+    src: sequenceTenReel,
+    tone: "#0d0d0d",
+    glow: "#b88d2b",
+    index: "05",
   },
   {
     id: "glow-frame",
     title: "Glow Frame Edit",
-    category: "Lifestyle reel",
-    summary:
-      "Soft light, luxury movement, and a cinematic frame rhythm throughout.",
-    duration: "31 sec",
-    video: sequenceElevenReel,
-    accent: ["#f4d98f", "#38566f"],
+    category: "Editorial Cut",
+    duration: "0:31",
+    client: "Creator brand film",
+    note: "Soft light, luxury movement, and a cinematic frame rhythm.",
+    tags: ["Lifestyle", "Luxury", "Frame"],
+    src: sequenceElevenReel,
+    tone: "#101010",
+    glow: "#ddc06d",
+    index: "06",
   },
   {
     id: "signature-story",
     title: "Signature Story Film",
-    category: "Personal brand",
-    summary:
-      "A signature cinematic cut built to feel like a luxury motion study.",
-    duration: "45 sec",
-    video: dhanushReel,
-    accent: ["#f0cc78", "#3d2241"],
+    category: "Studio Motion",
+    duration: "0:45",
+    client: "Motion identity design",
+    note: "A signature cut designed like a luxury motion study.",
+    tags: ["Signature", "Narrative", "Brand"],
+    src: dhanushReel,
+    tone: "#090909",
+    glow: "#f2dc8a",
+    index: "07",
   },
   {
     id: "studio-frame",
     title: "Studio Frame Reel",
-    category: "Editorial crop",
-    summary:
-      "A modern camera-led sequence with clean lines and deliberate pacing.",
-    duration: "28 sec",
-    video: img0553Reel,
-    accent: ["#efd47f", "#384b69"],
+    category: "Editorial Cut",
+    duration: "0:28",
+    client: "Cinematic launch visuals",
+    note: "Camera-led framing with clean lines and deliberate pacing.",
+    tags: ["Editorial", "Studio", "Frame"],
+    src: img0553Reel,
+    tone: "#101010",
+    glow: "#efd47f",
+    index: "08",
   },
   {
     id: "breakaway",
     title: "Breakaway Film",
-    category: "Story cut",
-    summary:
-      "A moodier reel with softer contrast and more dramatic motion beats.",
-    duration: "41 sec",
-    video: divorceFinalReel,
-    accent: ["#f0ce79", "#4b2544"],
+    category: "Commercial Reel",
+    duration: "0:41",
+    client: "Commercial storytelling",
+    note: "Moody motion with softer contrast and more dramatic beats.",
+    tags: ["Atmosphere", "Story", "Film"],
+    src: divorceFinalReel,
+    tone: "#0c0c0c",
+    glow: "#f0ce79",
+    index: "09",
   },
 ];
 
-export function RecentWorksSection() {
-  const [activeIndex, setActiveIndex] = useState(6);
-  const posters = useVideoPosters(reels);
-  const activeReel = reels[activeIndex];
-
-  const previousIndex = useMemo(
-    () => (activeIndex - 1 + reels.length) % reels.length,
-    [activeIndex],
-  );
-  const nextIndex = useMemo(
-    () => (activeIndex + 1) % reels.length,
-    [activeIndex],
-  );
-
-  const goPrevious = () =>
-    setActiveIndex((current) => (current - 1 + reels.length) % reels.length);
-  const goNext = () =>
-    setActiveIndex((current) => (current + 1) % reels.length);
-
-  return (
-    <div className="space-y-8 text-white sm:space-y-10">
-      <motion.div
-        className="max-w-4xl space-y-4"
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <div className="inline-flex items-center gap-2 border-b border-bullion/30 pb-2 text-[0.56rem] font-semibold uppercase tracking-[0.32em] text-champagne/92">
-          <Sparkles size={12} />
-          cinematic reel showcase
-        </div>
-        <h2 className="font-display max-w-[14ch] text-[clamp(1.9rem,3.6vw,3.9rem)] font-semibold leading-[0.88] tracking-[-0.065em] text-white">
-          A premium reel stage with editorial motion depth.
-        </h2>
-        <p className="max-w-3xl text-sm leading-8 text-white/64 sm:text-base">
-          A minimal Awwwards-style composition built for premium editing work:
-          one hero reel, two soft previews, and a compact metadata panel.
-        </p>
-      </motion.div>
-
-      <div className="relative overflow-visible">
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[2.2rem]">
-          <motion.div
-            className="absolute left-1/2 top-[50%] h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bullion/12 blur-[120px]"
-            animate={{ opacity: [0.45, 0.75, 0.45], scale: [0.96, 1.04, 0.96] }}
-            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <div className="absolute left-[12%] top-[18%] h-44 w-44 rounded-full bg-bullion/12 blur-3xl" />
-          <div className="absolute right-[14%] top-[26%] h-40 w-40 rounded-full bg-champagne/9 blur-3xl" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,255,255,0.04),transparent_32%),radial-gradient(circle_at_50%_72%,rgba(212,175,55,0.08),transparent_28%)] opacity-80" />
-          <div className="absolute inset-0 opacity-[0.08] [background-image:radial-gradient(rgba(255,255,255,0.45)_0.7px,transparent_0.7px)] [background-size:14px_14px]" />
-        </div>
-
-        <div className="showcase-track grid items-center gap-6 xl:grid-cols-[0.86fr_minmax(320px,360px)_0.92fr] xl:gap-8">
-          <PreviewReelCard
-            position="left"
-            reel={reels[previousIndex]}
-            poster={posters[reels[previousIndex].id]}
-            onSelect={() => setActiveIndex(previousIndex)}
-          />
-
-          <FeaturedReelCard
-            reel={activeReel}
-            poster={posters[activeReel.id]}
-            size="vertical"
-          />
-
-          <DetailPanel
-            reel={activeReel}
-            onPrevious={goPrevious}
-            onNext={goNext}
-          />
-        </div>
-      </div>
-    </div>
-  );
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 }
 
-function PreviewReelCard({
-  reel,
-  position,
-  poster,
-  onSelect,
-}: {
-  reel: ReelItem;
-  position: "left" | "right";
-  poster?: string;
-  onSelect: () => void;
-}) {
-  const isLeft = position === "left";
-
-  return (
-    <motion.button
-      type="button"
-      onClick={onSelect}
-      className={`side-preview group relative mx-auto w-full max-w-[220px] text-left outline-none ${isLeft ? "xl:justify-self-end" : "xl:justify-self-start"}`}
-      initial={{ opacity: 0, x: isLeft ? -22 : 22 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      whileHover={{ scale: 0.97, y: -3 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      animate={{
-        opacity: 0.58,
-        scale: 0.9,
-        filter: "blur(1px)",
-        translateY: 6,
-      }}
-    >
-      <div className="absolute -inset-4 rounded-[26px] bg-[radial-gradient(circle_at_50%_30%,rgba(212,175,55,0.2),transparent_64%)] opacity-40 blur-2xl" />
-      <div className="relative overflow-hidden rounded-[24px] border border-white/8 bg-[#050505]/68 shadow-[0_22px_62px_rgba(0,0,0,0.55)] backdrop-blur-xl transition duration-500 group-hover:border-bullion/22">
-        <ReelVisual
-          reel={reel}
-          poster={poster}
-          active={false}
-          showVideo={false}
-          size="preview"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.55))]" />
-        <div className="absolute inset-x-0 bottom-0 p-4">
-          <p className="text-[0.5rem] font-semibold uppercase tracking-[0.28em] text-white/44">
-            {reel.category}
-          </p>
-          <h3 className="mt-2 text-sm font-semibold tracking-[-0.03em] text-white/92">
-            {reel.title}
-          </h3>
-        </div>
-      </div>
-    </motion.button>
-  );
+function makeFallbackPoster(reel: ReelItem) {
+  const title = escapeXml(reel.title);
+  const client = escapeXml(reel.client);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0.32" y2="1">
+        <stop offset="0%" stop-color="#040404" />
+        <stop offset="52%" stop-color="${reel.tone}" />
+        <stop offset="100%" stop-color="${reel.glow}" stop-opacity="0.38" />
+      </linearGradient>
+      <radialGradient id="halo" cx="50%" cy="28%" r="58%">
+        <stop offset="0%" stop-color="${reel.glow}" stop-opacity="0.24" />
+        <stop offset="100%" stop-color="${reel.glow}" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect width="900" height="1600" fill="url(#bg)" />
+    <rect width="900" height="1600" fill="url(#halo)" />
+    <rect x="64" y="76" width="180" height="2" rx="1" fill="${reel.glow}" fill-opacity="0.72" />
+    <rect x="64" y="1442" width="772" height="1.5" rx="1" fill="${reel.glow}" fill-opacity="0.2" />
+    <text x="64" y="1474" fill="white" fill-opacity="0.94" font-family="Arial" font-size="56" font-weight="700">${title}</text>
+    <text x="64" y="1528" fill="${reel.glow}" fill-opacity="0.84" font-family="Arial" font-size="22" font-weight="600" letter-spacing="7">${client}</text>
+  </svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-function FeaturedReelCard({
-  reel,
-  poster,
-  size,
-}: {
-  reel: ReelItem;
-  poster?: string;
-  size?: "vertical" | "featured";
-}) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.6 });
+function capturePosterFrame(src: string) {
+  return new Promise<string | null>((resolve) => {
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.muted = true;
+    video.playsInline = true;
+    video.src = src;
 
-  return (
-    <motion.div
-      ref={ref}
-      className="featured-reel relative mx-auto w-full flex justify-center outline-none"
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <motion.div
-        className="pointer-events-none absolute -inset-7 rounded-[32px] bg-[radial-gradient(circle_at_50%_18%,rgba(212,175,55,0.28),transparent_44%)] blur-3xl"
-        animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.98, 1.03, 0.98] }}
-        transition={{ duration: 9.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="relative overflow-visible rounded-[30px]">
-        <div className="absolute inset-0 z-0 rounded-[28px] border border-bullion/26 shadow-[0_0_40px_rgba(212,175,55,0.18)]" />
-        <div className="mx-auto relative overflow-hidden rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.032),rgba(255,255,255,0.008))] shadow-[0_52px_140px_rgba(0,0,0,0.72)] backdrop-blur-xl">
-          <div
-            className="absolute inset-0 z-[1]"
-            style={{
-              background: `radial-gradient(circle at 50% 20%, ${reel.accent[0]}16, transparent 36%)`,
-            }}
-          />
+    const finish = (value: string | null) => {
+      video.removeAttribute("src");
+      video.load();
+      resolve(value);
+    };
 
-          <ReelVisual
-            reel={reel}
-            poster={poster}
-            active
-            showVideo={!!inView}
-            size={size === "vertical" ? "vertical" : "featured"}
-          />
+    const onLoadedMetadata = () => {
+      const seekTo = Math.min(0.12, Math.max(0, (video.duration || 0) * 0.05));
+      const onSeeked = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 540;
+          canvas.height = 960;
+          const context = canvas.getContext("2d");
+          if (!context) {
+            finish(null);
+            return;
+          }
 
-          <div className="pointer-events-none absolute inset-0 z-[4] bg-[linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.28))]" />
-
-          <div className="absolute left-3 top-3 z-[6] inline-flex items-center gap-2 rounded-full border border-bullion/24 bg-black/38 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.22em] text-champagne backdrop-blur-xl">
-            Featured
-          </div>
-
-          <div className="absolute bottom-3 left-3 z-[6] rounded-full border border-bullion/16 bg-black/46 px-3 py-1 text-[0.5rem] font-semibold uppercase tracking-[0.24em] text-white/76 backdrop-blur-xl">
-            {reel.duration}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function DetailPanel({
-  reel,
-  onPrevious,
-  onNext,
-}: {
-  reel: ReelItem;
-  onPrevious: () => void;
-  onNext: () => void;
-}) {
-  return (
-    <motion.aside
-      className="detail-panel mx-auto w-full max-w-[305px] rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(8,8,8,0.82),rgba(12,12,12,0.72))] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.56)] backdrop-blur-2xl"
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      key={reel.id}
-      layout
-    >
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.5rem] font-semibold uppercase tracking-[0.34em] text-white/42">
-          Editorial Notes
-        </p>
-        <div className="flex items-center gap-2">
-          <motion.button
-            type="button"
-            onClick={onPrevious}
-            className="grid h-9 w-9 place-items-center rounded-full border border-bullion/14 bg-white/[0.02] text-white/78 transition duration-500 hover:border-bullion/35 hover:bg-bullion/10 hover:text-white"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronLeft size={15} />
-          </motion.button>
-          <motion.button
-            type="button"
-            onClick={onNext}
-            className="grid h-9 w-9 place-items-center rounded-full border border-bullion/14 bg-white/[0.02] text-white/78 transition duration-500 hover:border-bullion/35 hover:bg-bullion/10 hover:text-white"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronRight size={15} />
-          </motion.button>
-        </div>
-      </div>
-
-      <div className="mt-6 space-y-5">
-        <div>
-          <p className="text-[0.52rem] font-semibold uppercase tracking-[0.3em] text-white/38">
-            {reel.category}
-          </p>
-          <h3 className="mt-3 font-display text-[clamp(1.7rem,2.5vw,2.8rem)] font-semibold leading-[0.92] tracking-[-0.05em] text-white">
-            {reel.title}
-          </h3>
-        </div>
-
-        <p className="max-w-sm text-sm leading-7 text-white/62">
-          {reel.summary}
-        </p>
-
-        <div className="space-y-2 border-y border-white/6 py-3 text-[0.54rem] font-semibold uppercase tracking-[0.22em] text-white/44">
-          <div className="flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            {reel.duration}
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <div>Luxury captions</div>
-          <div>Social-first pacing</div>
-          <div>Editorial transitions</div>
-        </div>
-
-        <button className="mt-2 inline-flex items-center gap-2 rounded-full border border-bullion/26 bg-bullion/10 px-4 py-2 text-[0.56rem] font-semibold uppercase tracking-[0.24em] text-champagne transition duration-500 hover:-translate-y-0.5 hover:bg-bullion/20 hover:shadow-[0_16px_36px_rgba(212,175,55,0.2)]">
-          <Play size={11} fill="currentColor" />
-          View reel
-        </button>
-      </div>
-    </motion.aside>
-  );
-}
-
-function ReelVisual({
-  reel,
-  poster,
-  active,
-  showVideo,
-  size,
-  onHoverChange,
-}: {
-  reel: ReelItem;
-  poster?: string;
-  active: boolean;
-  showVideo: boolean;
-  size: "preview" | "featured" | "vertical";
-  onHoverChange?: (value: boolean) => void;
-}) {
-  const videoRef = useMemo(
-    () => ({ current: null as HTMLVideoElement | null }),
-    [],
-  );
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) {
-      return;
-    }
-
-    if (showVideo) {
-      const playPromise = video.play();
-      if (playPromise) {
-        playPromise.catch(() => undefined);
-      }
-    } else {
-      video.pause();
-      video.currentTime = 0;
-    }
-  }, [showVideo, videoRef]);
-
-  const frameClass =
-    size === "vertical"
-      ? "w-[320px] sm:w-[340px] md:w-[360px] aspect-[9/16] mx-auto"
-      : size === "featured"
-        ? "aspect-[16/9] h-full w-full"
-        : "aspect-[16/9] h-full w-full";
-
-  return (
-    <div
-      className={`group relative ${frameClass} overflow-hidden bg-[#050505]`}
-      onMouseEnter={() => onHoverChange?.(true)}
-      onMouseLeave={() => onHoverChange?.(false)}
-      onFocus={() => onHoverChange?.(true)}
-      onBlur={() => onHoverChange?.(false)}
-    >
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[1]"
-        animate={active ? { opacity: [0.72, 0.92, 0.72] } : { opacity: 0.7 }}
-        transition={
-          active
-            ? { duration: 6.2, repeat: Infinity, ease: "easeInOut" }
-            : { duration: 0.2 }
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          finish(canvas.toDataURL("image/jpeg", 0.84));
+        } catch {
+          finish(null);
         }
-        style={{
-          background: `radial-gradient(circle at 50% 16%, ${reel.accent[0]}1f, transparent 34%), radial-gradient(circle at 50% 92%, ${reel.accent[1]}18, transparent 30%)`,
-        }}
-      />
+      };
 
-      <img
-        src={poster ?? createFallbackPoster(reel)}
-        alt={`${reel.title} poster`}
-        className={`absolute inset-0 z-[2] h-full w-full transition duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03] ${
-          size === "vertical"
-            ? "object-contain p-2 bg-[#040405]"
-            : "object-cover object-center"
-        }`}
-        loading="lazy"
-      />
+      video.addEventListener("seeked", onSeeked, { once: true });
 
-      <AnimatePresence>
-        {showVideo ? (
-          <motion.video
-            key={reel.id}
-            ref={(element) => {
-              videoRef.current = element;
-            }}
-            src={reel.video}
-            className={`absolute inset-0 z-[3] block h-full w-full ${
-              size === "vertical"
-                ? "object-contain"
-                : "object-cover object-center"
-            }`}
-            muted
-            loop
-            playsInline
-            autoPlay
-            preload="metadata"
-            poster={poster ?? createFallbackPoster(reel)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          />
-        ) : null}
-      </AnimatePresence>
+      try {
+        video.currentTime = seekTo;
+      } catch {
+        finish(null);
+      }
+    };
 
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[4]"
-        animate={active ? { scale: 1.02 } : { scale: 1 }}
-        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          background: `linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.34)), radial-gradient(circle at 50% 18%, rgba(255,255,255,0.06), transparent 32%)`,
-        }}
-      />
-
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[5]"
-        animate={active ? { opacity: 1 } : { opacity: 0.85 }}
-        transition={{ duration: 0.3 }}
-        style={{
-          background: `linear-gradient(135deg, ${reel.accent[0]}12, transparent 38%, ${reel.accent[1]}10)`,
-        }}
-      />
-
-      <div className="pointer-events-none absolute inset-0 z-[6] bg-[linear-gradient(180deg,transparent_0%,transparent_60%,rgba(0,0,0,0.34)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 z-[7] opacity-[0.12] [background-image:radial-gradient(rgba(255,255,255,0.34)_0.7px,transparent_0.7px)] [background-size:12px_12px]" />
-    </div>
-  );
+    video.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
+    video.addEventListener("error", () => finish(null), { once: true });
+    video.load();
+  });
 }
 
-function useVideoPosters(reelItems: ReelItem[]) {
-  const [posters, setPosters] = useState<Record<string, string>>({});
+function usePosterSources(reelItems: ReelItem[]) {
+  const [generatedPosters, setGeneratedPosters] = useState<
+    Record<string, string>
+  >({});
 
   useEffect(() => {
     let cancelled = false;
 
-    const captureAll = async () => {
+    const run = async () => {
       for (const reel of reelItems) {
-        try {
-          const poster = await capturePosterFromVideo(reel.video);
-          if (cancelled) {
-            return;
-          }
-
-          setPosters((current) => ({
-            ...current,
-            [reel.id]: poster,
-          }));
-        } catch {
-          if (cancelled) {
-            return;
-          }
-
-          setPosters((current) => ({
-            ...current,
-            [reel.id]: createFallbackPoster(reel),
-          }));
+        const poster = await capturePosterFrame(reel.src);
+        if (!poster || cancelled) {
+          continue;
         }
+
+        setGeneratedPosters((current) => {
+          if (current[reel.id]) {
+            return current;
+          }
+
+          return { ...current, [reel.id]: poster };
+        });
       }
     };
 
-    void captureAll();
-
+    void run();
     return () => {
       cancelled = true;
     };
   }, [reelItems]);
 
-  return posters;
+  return generatedPosters;
 }
 
-function capturePosterFromVideo(source: string) {
-  return new Promise<string>((resolve, reject) => {
-    const video = document.createElement("video");
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "auto";
-    video.src = source;
+export function RecentWorksSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState("0:00");
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const total = reels.length;
+  const activeReel = reels[activeIndex];
+  const posterMap = usePosterSources(reels);
 
-    const cleanup = () => {
-      video.removeAttribute("src");
-      video.load();
-    };
+  const fallbackPosters = useMemo(
+    () =>
+      Object.fromEntries(
+        reels.map((reel) => [reel.id, makeFallbackPoster(reel)]),
+      ),
+    [],
+  );
 
-    const finalize = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth || 1280;
-        canvas.height = video.videoHeight || 720;
-        const context = canvas.getContext("2d");
+  const posterFor = useCallback(
+    (reel: ReelItem) => posterMap[reel.id] ?? fallbackPosters[reel.id],
+    [fallbackPosters, posterMap],
+  );
 
-        if (!context) {
-          cleanup();
-          reject(new Error("Unable to create poster canvas."));
-          return;
-        }
+  const prev = useCallback(() => {
+    setActiveIndex((index) => (index - 1 + total) % total);
+  }, [total]);
 
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const poster = canvas.toDataURL("image/jpeg", 0.84);
-        cleanup();
-        resolve(poster);
-      } catch (error) {
-        cleanup();
-        reject(
-          error instanceof Error ? error : new Error("Poster capture failed."),
+  const next = useCallback(() => {
+    setActiveIndex((index) => (index + 1) % total);
+  }, [total]);
+
+  const onSelect = useCallback((index: number) => {
+    setActiveIndex(index);
+  }, []);
+
+  useEffect(() => {
+    setIsMuted(true);
+    setProgress(0);
+    setCurrentTime("0:00");
+  }, [activeReel.id]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        window.dispatchEvent(
+          new CustomEvent(WORKS_VISIBILITY_EVENT, {
+            detail: { inView: entry.isIntersecting },
+          }),
         );
-      }
-    };
+      },
+      { threshold: 0.18, rootMargin: "-8% 0px -22% 0px" },
+    );
 
-    const seekToFrame = () => {
-      const targetTime = Math.min(
-        0.18,
-        Math.max(0.04, (video.duration || 1) * 0.06),
+    const node = sectionRef.current;
+    if (node) {
+      observer.observe(node);
+    }
+
+    return () => {
+      if (node) {
+        observer.unobserve(node);
+      }
+      observer.disconnect();
+      window.dispatchEvent(
+        new CustomEvent(WORKS_VISIBILITY_EVENT, { detail: { inView: false } }),
       );
-      try {
-        video.currentTime = targetTime;
-      } catch {
-        finalize();
-      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") prev();
+      if (event.key === "ArrowRight") next();
     };
 
-    video.addEventListener(
-      "loadeddata",
-      () => {
-        if (video.readyState >= 2) {
-          seekToFrame();
-        }
-      },
-      { once: true },
-    );
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, [next, prev]);
 
-    video.addEventListener("seeked", finalize, { once: true });
-    video.addEventListener(
-      "error",
-      () => {
-        cleanup();
-        reject(new Error("Unable to load video frame."));
-      },
-      { once: true },
-    );
+  return (
+    <section
+      ref={sectionRef}
+      className="relative mx-auto w-full max-w-[1720px] select-none text-white"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+        className="mb-8 lg:mb-12"
+      >
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-end lg:gap-12">
+          <div className="relative space-y-5">
+            <div className="inline-flex items-center gap-3">
+              <span className="h-px w-8 bg-gradient-to-r from-transparent via-bullion to-transparent" />
+              <span className="text-[0.56rem] font-semibold uppercase tracking-[0.42em] text-champagne/78">
+                cinematic works
+              </span>
+            </div>
+            <h2 className="max-w-[13ch] font-display text-[clamp(3rem,5vw,6.4rem)] font-semibold leading-[0.84] tracking-[-0.11em] text-white">
+              Retention-focused{" "}
+              <span className="gold-gradient-text">motion</span>
+              <br />
+              crafted for modern{" "}
+              <span className="gold-gradient-text">brands</span>.
+            </h2>
+            <div className="relative max-w-[34rem]">
+              <div className="pointer-events-none absolute left-[-1rem] top-[-1rem] h-20 w-20 rounded-full bg-bullion/12 blur-3xl" />
+              <p className="max-w-[31rem] text-[0.95rem] leading-8 text-white/64 sm:text-[1rem]">
+                Commercial storytelling, retention-focused edits, editorial
+                motion systems, and premium short-form storytelling shaped for
+                launch visuals, creator brands, and cinematic narratives.
+              </p>
+            </div>
+          </div>
 
-    video.load();
-  });
+          <div className="grid gap-3 text-left lg:justify-self-end lg:text-right">
+            <p className="text-[0.54rem] font-semibold uppercase tracking-[0.38em] text-white/34">
+              editorial motion studio
+            </p>
+            <p className="max-w-[24rem] text-[0.92rem] leading-8 text-white/56 lg:ml-auto">
+              A premium showcase of client work, creator brand films, and
+              cinematic launch visuals, arranged to feel restrained, immersive,
+              and refined.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(220px,0.8fr)_minmax(320px,0.9fr)_minmax(240px,0.78fr)] lg:items-start xl:gap-8">
+        <div className="hidden lg:flex lg:flex-col lg:justify-start lg:gap-4">
+          <ThumbRail
+            reels={reels}
+            activeIndex={activeIndex}
+            posterFor={posterFor}
+            align="end"
+            onSelect={onSelect}
+          />
+        </div>
+
+        <div className="mx-auto w-full max-w-[360px] lg:max-w-[372px]">
+          <MainReelPlayer
+            reel={activeReel}
+            poster={posterFor(activeReel)}
+            onPrev={prev}
+            onNext={next}
+            isMuted={isMuted}
+            progress={progress}
+            currentTime={currentTime}
+            onProgress={setProgress}
+            onTimeUpdate={setCurrentTime}
+            onToggleMute={() => setIsMuted((value) => !value)}
+          />
+
+          <div className="mt-6 lg:hidden">
+            <ThumbRail
+              reels={reels}
+              activeIndex={activeIndex}
+              posterFor={posterFor}
+              align="start"
+              mobile
+              onSelect={onSelect}
+            />
+          </div>
+        </div>
+
+        <div className="hidden lg:flex lg:flex-col lg:justify-end lg:gap-6">
+          <ActiveInfo
+            reel={activeReel}
+            isMuted={isMuted}
+            progress={progress}
+            currentTime={currentTime}
+            onToggleMute={() => setIsMuted((value) => !value)}
+          />
+          <div className="rounded-[1.8rem] border border-white/[0.05] bg-white/[0.015] p-4">
+            <ThumbRail
+              reels={reels}
+              activeIndex={activeIndex}
+              posterFor={posterFor}
+              align="start"
+              onSelect={onSelect}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 lg:hidden">
+        <ActiveInfo
+          reel={activeReel}
+          isMuted={isMuted}
+          progress={progress}
+          currentTime={currentTime}
+          onToggleMute={() => setIsMuted((value) => !value)}
+        />
+      </div>
+
+      <TimelineStrip
+        reels={reels}
+        activeIndex={activeIndex}
+        onSelect={onSelect}
+      />
+    </section>
+  );
 }
 
-function createFallbackPoster(reel: ReelItem) {
-  const safeTitle = escapeXml(reel.title);
-  const safeCategory = escapeXml(reel.category);
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="${safeTitle}">
-      <defs>
-        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#050505" />
-          <stop offset="50%" stop-color="${reel.accent[0]}" stop-opacity="0.34" />
-          <stop offset="100%" stop-color="${reel.accent[1]}" stop-opacity="0.82" />
-        </linearGradient>
-        <radialGradient id="glow" cx="50%" cy="20%" r="72%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.16" />
-          <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
-        </radialGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#bg)" />
-      <rect x="40" y="40" width="1520" height="820" rx="42" fill="none" stroke="#ffffff" stroke-opacity="0.14" stroke-width="2" />
-      <rect x="76" y="76" width="1448" height="748" rx="34" fill="url(#glow)" />
-      <path d="M124 646 C374 472, 620 378, 956 248 C1158 170, 1330 126, 1478 92" fill="none" stroke="#ffffff" stroke-opacity="0.34" stroke-width="16" stroke-linecap="round" />
-      <path d="M124 704 C376 540, 648 442, 990 312 C1170 228, 1320 178, 1490 148" fill="none" stroke="${reel.accent[0]}" stroke-opacity="0.54" stroke-width="11" stroke-linecap="round" />
-      <text x="96" y="760" fill="#ffffff" fill-opacity="0.94" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700" letter-spacing="2">${safeTitle}</text>
-      <text x="96" y="818" fill="#ffffff" fill-opacity="0.58" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="600" letter-spacing="8">${safeCategory}</text>
-    </svg>
-  `;
+function MainReelPlayer({
+  reel,
+  poster,
+  onPrev,
+  onNext,
+  isMuted,
+  progress,
+  currentTime,
+  onProgress,
+  onTimeUpdate,
+  onToggleMute,
+}: {
+  reel: ReelItem;
+  poster: string;
+  onPrev: () => void;
+  onNext: () => void;
+  isMuted: boolean;
+  progress: number;
+  currentTime: string;
+  onProgress: (value: number) => void;
+  onTimeUpdate: (value: string) => void;
+  onToggleMute: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    setIsReady(false);
+    video.pause();
+    video.muted = true;
+  }, [reel.id]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = isMuted;
+    if (!isMuted) {
+      video.play().catch(() => undefined);
+    }
+  }, [isMuted]);
+
+  const handleTimeUpdate = useCallback(
+    (event: SyntheticEvent<HTMLVideoElement>) => {
+      const video = event.currentTarget;
+      if (!video.duration) return;
+      onProgress(Math.min(100, (video.currentTime / video.duration) * 100));
+      const minutes = Math.floor(video.currentTime / 60);
+      const seconds = Math.floor(video.currentTime % 60)
+        .toString()
+        .padStart(2, "0");
+      onTimeUpdate(`${minutes}:${seconds}`);
+    },
+    [onProgress, onTimeUpdate],
+  );
+
+  const handleLoadedData = useCallback(
+    (event: SyntheticEvent<HTMLVideoElement>) => {
+      const video = event.currentTarget;
+      setIsReady(true);
+      video.play().catch(() => undefined);
+    },
+    [],
+  );
+
+  return (
+    <div className="relative mx-auto w-full max-w-[392px]">
+      <div
+        className="pointer-events-none absolute inset-[-1.3rem] rounded-[2.2rem]"
+        style={{
+          background: `radial-gradient(circle at 50% 44%, ${reel.glow}16, transparent 62%)`,
+        }}
+      />
+
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-[#050505] shadow-[0_30px_84px_rgba(0,0,0,0.82)]">
+        <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{
+                background: reel.glow,
+                boxShadow: `0 0 14px ${reel.glow}88`,
+              }}
+            />
+            <span className="text-[0.46rem] font-semibold uppercase tracking-[0.36em] text-white/46">
+              {reel.category}
+            </span>
+          </div>
+          <span className="font-mono text-[0.45rem] text-white/28">
+            reel {reel.index}
+          </span>
+        </div>
+
+        {/* <div
+          className="relative overflow-hidden bg-black px-2.5 py-2.5 sm:px-3 sm:py-3"
+          style={{ aspectRatio: "9 / 16", maxHeight: "62vh" }}
+        >
+          <div
+            className="absolute inset-1.5 rounded-[1.3rem] border border-white/[0.06]"
+            style={{
+              boxShadow: `inset 0 0 0 1px ${reel.glow}14, inset 0 0 34px ${reel.glow}08`,
+            }}
+          />
+          <img
+            src={poster}
+            alt={`${reel.title} poster`}
+            className="absolute inset-1.5 h-[calc(100%-12px)] w-[calc(100%-12px)] rounded-[1.15rem] object-cover object-center opacity-92"
+            style={{ objectPosition: "50% 36%", transform: "scale(1.01)" }}
+            draggable={false}
+          />
+          <div className="absolute inset-1.5 rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(0,0,0,0.025),rgba(0,0,0,0.012)_28%,rgba(0,0,0,0.32)_100%)]" />
+          <div className="absolute inset-1.5 rounded-[1.15rem] bg-[radial-gradient(circle_at_50%_18%,rgba(212,175,55,0.09),transparent_34%)]" />
+
+          <video
+            key={reel.id}
+            ref={videoRef}
+            className="absolute inset-1.5 h-[calc(100%-12px)] w-[calc(100%-12px)] rounded-[1.15rem] object-cover object-center transition-opacity duration-500"
+            style={{
+              opacity: isReady ? 1 : 0,
+              objectPosition: "50% 36%",
+              transform: "scale(1.01)",
+            }}
+            src={reel.src}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={poster}
+            onLoadedData={handleLoadedData}
+            onTimeUpdate={handleTimeUpdate}
+          />
+
+          {!isReady && (
+            <div className="absolute inset-0 grid place-items-center bg-black/12">
+              <div className="h-10 w-10 rounded-full border border-white/10 border-t-bullion/60 animate-spin" />
+            </div>
+          )}
+
+          <div className="absolute left-3.5 top-3.5 rounded-full border border-white/10 bg-black/48 px-3 py-1.5 text-[0.42rem] font-semibold uppercase tracking-[0.34em] text-white/68">
+            {reel.client}
+          </div>
+
+          <div className="absolute right-3.5 top-3.5 rounded-full border border-bullion/22 bg-black/48 px-3 py-1.5 text-[0.42rem] font-semibold uppercase tracking-[0.34em] text-champagne/88">
+            9:16 reel
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/92 via-black/48 to-transparent px-3.5 pb-3.5 pt-14">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={reel.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <p className="text-[0.42rem] font-semibold uppercase tracking-[0.34em] text-bullion/78">
+                  active reel
+                </p>
+                <h3 className="mt-1 font-display text-[clamp(1.2rem,2vw,1.8rem)] font-semibold leading-[0.95] tracking-[-0.06em] text-white">
+                  {reel.title}
+                </h3>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <button
+            type="button"
+            onClick={onPrev}
+            aria-label="Previous reel"
+            className="absolute left-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/10 bg-black/46 text-white/72 transition-colors duration-200 hover:border-bullion/36 hover:text-champagne"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            onClick={onNext}
+            aria-label="Next reel"
+            className="absolute right-3 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/10 bg-black/46 text-white/72 transition-colors duration-200 hover:border-bullion/36 hover:text-champagne"
+          >
+            ›
+          </button>
+        </div> */}
+
+        <div
+          className="relative overflow-hidden bg-black p-3"
+          style={{
+            aspectRatio: "9 / 16",
+            maxHeight: "68vh",
+          }}
+        >
+          {/* Luxury frame */}
+          <div
+            className="absolute inset-0 rounded-[1.8rem] border border-white/[0.06]"
+            style={{
+              boxShadow: `
+        inset 0 0 0 1px ${reel.glow}10,
+        inset 0 0 30px ${reel.glow}08
+      `,
+            }}
+          />
+
+          {/* SAFE AREA */}
+          <div className="absolute inset-[14px] overflow-hidden rounded-[1.45rem] bg-black">
+            {/* Poster */}
+            <img
+              src={poster}
+              alt={`${reel.title} poster`}
+              className="absolute inset-0 h-full w-full object-cover object-center opacity-100"
+              draggable={false}
+            />
+
+            {/* Video */}
+            <video
+              key={reel.id}
+              ref={videoRef}
+              className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500"
+              style={{
+                opacity: isReady ? 1 : 0,
+              }}
+              src={reel.src}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={poster}
+              onLoadedData={handleLoadedData}
+              onTimeUpdate={handleTimeUpdate}
+            />
+
+            {!isReady && (
+              <div className="absolute inset-0 grid place-items-center bg-black/20">
+                <div className="h-10 w-10 rounded-full border border-white/10 border-t-bullion/60 animate-spin" />
+              </div>
+            )}
+
+            {/* TOP BADGES */}
+            <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 text-[0.42rem] font-semibold uppercase tracking-[0.34em] text-white/68 backdrop-blur-md">
+              {reel.client}
+            </div>
+
+            <div className="absolute right-4 top-4 rounded-full border border-bullion/22 bg-black/50 px-3 py-1.5 text-[0.42rem] font-semibold uppercase tracking-[0.34em] text-champagne/88 backdrop-blur-md">
+              9:16 reel
+            </div>
+
+            {/* BOTTOM OVERLAY */}
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent px-4 pb-4 pt-16">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={reel.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="text-[0.42rem] font-semibold uppercase tracking-[0.34em] text-bullion/78">
+                    active reel
+                  </p>
+
+                  <h3 className="mt-1 font-display text-[clamp(1.2rem,2vw,1.8rem)] font-semibold leading-[0.95] tracking-[-0.06em] text-white">
+                    {reel.title}
+                  </h3>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* NAV BUTTONS */}
+          <button
+            type="button"
+            onClick={onPrev}
+            aria-label="Previous reel"
+            className="absolute left-4 top-1/2 z-20 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/10 bg-black/46 text-white/72 transition-colors duration-200 hover:border-bullion/36 hover:text-champagne"
+          >
+            ‹
+          </button>
+
+          <button
+            type="button"
+            onClick={onNext}
+            aria-label="Next reel"
+            className="absolute right-4 top-1/2 z-20 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/10 bg-black/46 text-white/72 transition-colors duration-200 hover:border-bullion/36 hover:text-champagne"
+          >
+            ›
+          </button>
+        </div>
+
+        <div className="space-y-4 px-4 py-4">
+          <div className="space-y-2">
+            <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full transition-[width] duration-200"
+                style={{
+                  width: `${progress}%`,
+                  background: `linear-gradient(90deg, ${reel.glow}88, ${reel.glow})`,
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-[0.44rem] font-semibold uppercase tracking-[0.32em] text-white/34">
+              <span>{currentTime}</span>
+              <span>
+                {reel.category} · {reel.duration}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-1.5">
+              {reel.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-bullion/16 bg-bullion/6 px-2.5 py-1 text-[0.38rem] font-semibold uppercase tracking-[0.24em] text-champagne/70"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={onToggleMute}
+              aria-label={isMuted ? "Unmute reel" : "Mute reel"}
+              className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border transition-all duration-200 ${
+                isMuted
+                  ? "border-white/10 bg-white/[0.03] text-white/54 hover:border-bullion/34 hover:text-bullion"
+                  : "border-bullion/42 bg-bullion/12 text-bullion shadow-[0_0_20px_rgba(212,175,55,0.16)]"
+              }`}
+            >
+              {isMuted ? <MicOff size={13} /> : <Volume2 size={13} />}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function escapeXml(value: string) {
-  return value
-    .split("&")
-    .join("&amp;")
-    .split("<")
-    .join("&lt;")
-    .split(">")
-    .join("&gt;")
-    .split('"')
-    .join("&quot;")
-    .split("'")
-    .join("&apos;");
+function ThumbRail({
+  reels,
+  activeIndex,
+  posterFor,
+  align,
+  onSelect,
+  mobile = false,
+}: {
+  reels: ReelItem[];
+  activeIndex: number;
+  posterFor: (reel: ReelItem) => string;
+  align: "start" | "end";
+  onSelect: (index: number) => void;
+  mobile?: boolean;
+}) {
+  const total = reels.length;
+  const indices = mobile
+    ? Array.from({ length: total }, (_, index) => index)
+    : align === "end"
+      ? [
+          (activeIndex - 3 + total) % total,
+          (activeIndex - 2 + total) % total,
+          (activeIndex - 1 + total) % total,
+        ]
+      : [
+          (activeIndex + 1) % total,
+          (activeIndex + 2) % total,
+          (activeIndex + 3) % total,
+        ];
+
+  return (
+    <div
+      className={
+        mobile
+          ? "flex gap-3 overflow-x-auto pb-2"
+          : `flex flex-col gap-4 ${align === "end" ? "items-end" : "items-start"}`
+      }
+    >
+      {indices.map((reelIndex, position) => {
+        const reel = reels[reelIndex];
+        const active = reelIndex === activeIndex;
+        return (
+          <ThumbnailCard
+            key={reel.id}
+            reel={reel}
+            active={active}
+            compact={!mobile && position !== 1}
+            poster={posterFor(reel)}
+            onClick={() => onSelect(reelIndex)}
+          />
+        );
+      })}
+    </div>
+  );
 }
+
+function ThumbnailCard({
+  reel,
+  active,
+  compact,
+  poster,
+  onClick,
+}: {
+  reel: ReelItem;
+  active: boolean;
+  compact: boolean;
+  poster: string;
+  onClick: () => void;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileHover={{ scale: 1.02, y: -2 }}
+      transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+      className={`group relative shrink-0 overflow-hidden rounded-[1.2rem] border bg-[#050505] text-left transition-all duration-300 ${
+        active
+          ? "border-bullion/42 shadow-[0_0_0_1px_rgba(212,175,55,0.16),0_14px_36px_rgba(0,0,0,0.34)]"
+          : "border-white/[0.08] opacity-80 hover:border-bullion/32 hover:opacity-100"
+      } ${compact ? "w-[120px] sm:w-[132px]" : "w-[138px] sm:w-[152px]"}`}
+      style={{ aspectRatio: "9 / 16" }}
+    >
+      <img
+        src={poster}
+        alt={`${reel.title} poster`}
+        className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+        draggable={false}
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.14)_30%,rgba(0,0,0,0.72)_100%)]" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{ boxShadow: `inset 0 0 0 1px ${reel.glow}66` }}
+      />
+
+      <div className="absolute left-3 top-3 text-[0.4rem] font-semibold uppercase tracking-[0.34em] text-white/50">
+        {reel.index}
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 px-3 pb-3 pt-10">
+        <p className="text-[0.42rem] font-semibold uppercase tracking-[0.32em] text-bullion/72">
+          {reel.client}
+        </p>
+        <h4 className="mt-1 text-[0.82rem] font-semibold leading-tight tracking-[-0.03em] text-white">
+          {reel.title}
+        </h4>
+      </div>
+
+      {active && (
+        <div className="pointer-events-none absolute inset-0 rounded-[1.45rem] border border-bullion/38" />
+      )}
+    </motion.button>
+  );
+}
+
+function ActiveInfo({
+  reel,
+  isMuted,
+  progress,
+  currentTime,
+  onToggleMute,
+}: {
+  reel: ReelItem;
+  isMuted: boolean;
+  progress: number;
+  currentTime: string;
+  onToggleMute: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="max-w-[28rem] space-y-5 lg:ml-auto lg:text-right"
+    >
+      <div className="inline-flex items-center gap-3 lg:ml-auto">
+        <span className="h-px w-8 bg-gradient-to-r from-transparent via-bullion to-transparent" />
+        <span className="text-[0.56rem] font-semibold uppercase tracking-[0.4em] text-white/34">
+          selected reel
+        </span>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={reel.id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <h3 className="font-display text-[clamp(2rem,3vw,3.4rem)] font-semibold leading-[0.9] tracking-[-0.08em] text-white">
+            {reel.title}
+          </h3>
+          <p className="mt-4 max-w-[24rem] text-[0.92rem] leading-8 text-white/62 lg:ml-auto">
+            {reel.client} · {reel.category} · {reel.duration}
+          </p>
+          <p className="mt-4 max-w-[23rem] text-[0.86rem] leading-7 text-white/48 lg:ml-auto">
+            {reel.note}
+          </p>
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="grid gap-4 rounded-[1.45rem] border border-white/[0.08] bg-white/[0.015] p-4 lg:ml-auto">
+        <div className="flex flex-wrap gap-2 lg:justify-end">
+          {reel.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-bullion/16 bg-bullion/6 px-2.5 py-1 text-[0.38rem] font-semibold uppercase tracking-[0.24em] text-champagne/72"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="space-y-2 lg:text-right">
+          <p className="text-[0.48rem] font-semibold uppercase tracking-[0.34em] text-white/34">
+            playback status
+          </p>
+          <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full transition-[width] duration-200"
+              style={{
+                width: `${progress}%`,
+                background: `linear-gradient(90deg, ${reel.glow}88, ${reel.glow})`,
+              }}
+            />
+          </div>
+          <div className="flex items-center justify-between text-[0.44rem] font-semibold uppercase tracking-[0.3em] text-white/32 lg:justify-end lg:gap-4">
+            <span>{currentTime}</span>
+            <span>{reel.duration}</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={onToggleMute}
+          className={`inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2 text-[0.48rem] font-semibold uppercase tracking-[0.3em] transition-colors duration-200 lg:ml-auto ${
+            isMuted
+              ? "border-white/10 bg-white/[0.03] text-white/60 hover:border-bullion/34 hover:text-bullion"
+              : "border-bullion/42 bg-bullion/12 text-bullion"
+          }`}
+        >
+          {isMuted ? <MicOff size={12} /> : <Volume2 size={12} />}
+          {isMuted ? "Unmute" : "Mute"}
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+function TimelineStrip({
+  reels,
+  activeIndex,
+  onSelect,
+}: {
+  reels: ReelItem[];
+  activeIndex: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="mt-8 border-t border-white/[0.06] pt-5"
+    >
+      <div className="flex items-center justify-between gap-4 text-[0.46rem] font-semibold uppercase tracking-[0.34em] text-white/26">
+        <span>timeline</span>
+        <span>tap a reel to shift focus</span>
+      </div>
+
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+        {reels.map((reel, index) => {
+          const active = index === activeIndex;
+          return (
+            <button
+              key={reel.id}
+              type="button"
+              onClick={() => onSelect(index)}
+              className={`shrink-0 rounded-full border px-3.5 py-2 text-left transition-all duration-200 ${
+                active
+                  ? "border-bullion/38 bg-bullion/10 text-champagne shadow-[0_0_0_1px_rgba(212,175,55,0.12)]"
+                  : "border-white/8 bg-white/[0.02] text-white/48 hover:border-bullion/22 hover:text-white/78"
+              }`}
+            >
+              <span className="block text-[0.46rem] font-semibold uppercase tracking-[0.32em]">
+                {reel.category}
+              </span>
+              <span className="mt-1 block text-[0.76rem] font-semibold tracking-[-0.02em] text-white">
+                {reel.index} — {reel.title}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+export default RecentWorksSection;

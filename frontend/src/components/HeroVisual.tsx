@@ -7,6 +7,7 @@ import {
 } from "framer-motion";
 import { Play } from "lucide-react";
 import { useEffect, useRef, type PointerEvent } from "react";
+import { WORKS_VISIBILITY_EVENT } from "./RecentWorksSection";
 import sequenceTen from "../videos/Sequence 01_10.mp4";
 import sequenceEleven from "../videos/Sequence 01_11.mp4";
 
@@ -15,6 +16,7 @@ export function HeroVisual() {
   const mainVideoRef = useRef<HTMLVideoElement>(null);
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const inView = useInView(stageRef, { amount: 0.45, once: false });
+  const worksInView = useRef(false);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const smoothX = useSpring(pointerX, {
@@ -44,7 +46,7 @@ export function HeroVisual() {
       return;
     }
 
-    if (inView) {
+    if (inView && !worksInView.current) {
       const playPromise = video.play();
       if (playPromise) {
         playPromise.catch(() => undefined);
@@ -53,6 +55,34 @@ export function HeroVisual() {
       video.pause();
       video.currentTime = 0;
     }
+  }, [inView]);
+
+  useEffect(() => {
+    const handleWorksVisibility = (event: Event) => {
+      const customEvent = event as CustomEvent<{ inView?: boolean }>;
+      worksInView.current = Boolean(customEvent.detail?.inView);
+
+      const video = mainVideoRef.current;
+      if (!video) {
+        return;
+      }
+
+      if (worksInView.current) {
+        video.pause();
+        return;
+      }
+
+      if (inView) {
+        const playPromise = video.play();
+        if (playPromise) {
+          playPromise.catch(() => undefined);
+        }
+      }
+    };
+
+    window.addEventListener(WORKS_VISIBILITY_EVENT, handleWorksVisibility);
+    return () =>
+      window.removeEventListener(WORKS_VISIBILITY_EVENT, handleWorksVisibility);
   }, [inView]);
 
   useEffect(() => {

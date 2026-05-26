@@ -160,28 +160,12 @@ export function PortfolioSectionsClean() {
 
       <section
         id="works"
-        className="relative overflow-hidden bg-[#050505] px-4 py-[clamp(5.5rem,8vw,8rem)] sm:px-8 lg:px-12"
+        className="relative overflow-hidden bg-[#050505] px-4 py-[clamp(4.5rem,7vw,7.5rem)] sm:px-8 lg:px-12"
       >
         <SectionAtmosphere tone="warm" />
         <div className="cinematic-grain-overlay" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-[1450px]">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-10 sm:mb-12"
-          >
-            <p className="text-[0.56rem] font-semibold uppercase tracking-[0.38em] text-champagne/90">
-              SHOWCASE
-            </p>
-            <h2 className="mt-4 max-w-[13ch] font-display text-[clamp(2.2rem,4.4vw,5.6rem)] font-semibold leading-[0.85] tracking-[-0.08em] text-white">
-              Cinematic <span className="gold-gradient-text">works</span> in one
-              flowing studio scene.
-            </h2>
-          </motion.div>
-
           <RecentWorksSection />
         </div>
       </section>
