@@ -18,6 +18,8 @@ export default {
           "Inter",
           "system-ui",
           "sans-serif",
+          "Syne",
+          "General Sans",
         ],
         body: ["Inter", '"Satoshi"', "system-ui", "sans-serif"],
       },

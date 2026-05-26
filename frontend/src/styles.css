@@ -1,23 +1,28 @@
-@import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+/* ══════════════════════════════════════════════════════════════════════════════
+   FONTS
+   Display  : General Sans — wide, editorial, premium geometry (Fontshare)
+   Body     : Plus Jakarta Sans — modern, open aperture, excellent on dark bg
+   Signature: Parisienne — cursive for Robin D signature
+   ══════════════════════════════════════════════════════════════════════════════ */
+@import url("https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Parisienne&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Root ─────────────────────────────────────────────────────────────────── */
 :root {
   color-scheme: dark;
   font-family:
-    "Inter",
+    "Plus Jakarta Sans",
     ui-sans-serif,
     system-ui,
     -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
     sans-serif;
   background: #000;
-  text-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -37,13 +42,12 @@ body {
   overflow-x: hidden;
   background: #000;
   font-family:
-    "Inter",
+    "Plus Jakarta Sans",
     ui-sans-serif,
     system-ui,
     -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
     sans-serif;
+  /* Plus Jakarta Sans has a slightly looser default — perfectly readable on dark */
 }
 
 section {
@@ -60,26 +64,17 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-@keyframes marquee-scroll {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
+/* ─── Signature font ──────────────────────────────────────────────────────── */
+.font-signature {
+  font-family: "Parisienne", cursive;
 }
 
-.marquee-track {
-  animation: marquee-scroll 28s linear infinite;
-}
-
+/* ─── Gold gradient text ─────────────────────────────────────────────────── */
 @keyframes gold-shift {
   0%,
   100% {
     background-position: 0% 50%;
   }
-
   50% {
     background-position: 100% 50%;
   }
@@ -100,14 +95,48 @@ button {
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 16px rgba(212, 175, 55, 0.14);
-  animation: gold-shift 7s ease-in-out infinite;
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.18);
+  animation: gold-shift 6.5s ease-in-out infinite;
 }
 
-.font-signature {
-  font-family: "Parisienne", cursive;
+/* ─── Marquee ────────────────────────────────────────────────────────────── */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
+.marquee-track {
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.group:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ─── Scanlines (used in hero LiveEditCard preview) ──────────────────────── */
+.scanlines {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  pointer-events: none;
+}
+
+/* ─── Hero grain overlay ─────────────────────────────────────────────────── */
+.hero-grain {
+  opacity: 0.05;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.72'/%3E%3C/svg%3E");
+}
+
+/* ─── About section ──────────────────────────────────────────────────────── */
 .about-cinematic-section {
   background: #050505;
 }
@@ -165,7 +194,7 @@ button {
   pointer-events: none;
   opacity: 0.1;
   mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg_viewBox=%220_0_256_256%22_xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter_id=%22n%22%3E%3CfeTurbulence_type=%22fractalNoise%22_baseFrequency=%220.82%22_numOctaves=%223%22_stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect_width=%22256%22_height=%22256%22_filter=%22url(%23n%22%29_opacity=%220.7%22/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
 }
 
 .about-vignette {
@@ -189,10 +218,10 @@ button {
   width: min(84vw, 1200px);
   transform: translate(-50%, -50%);
   text-align: center;
-  font-family: "Clash Display", sans-serif;
-  font-size: clamp(12rem, 20vw, 24rem);
-  font-weight: 600;
-  letter-spacing: -0.12em;
+  font-family: "General Sans", sans-serif;
+  font-size: clamp(10rem, 18vw, 22rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.03);
   filter: blur(5px);
@@ -212,20 +241,19 @@ button {
     opacity: 0.72;
     transform: scale(1);
   }
-
   50% {
     opacity: 1;
     transform: scale(1.02);
   }
 }
 
+/* ─── Ambient gold drift ─────────────────────────────────────────────────── */
 @keyframes ambient-gold-drift {
   0%,
   100% {
     transform: scale(1) translate3d(0, 0, 0);
     filter: saturate(1);
   }
-
   50% {
     transform: scale(1.03) translate3d(0, -0.8%, 0);
     filter: saturate(1.08);
@@ -237,13 +265,14 @@ button {
   will-change: transform, filter;
 }
 
+/* ─── Cinematic grain / vignette ─────────────────────────────────────────── */
 .cinematic-grain-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
   opacity: 0.06;
   mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg_viewBox=%220_0_256_256%22_xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter_id=%22n%22%3E%3CfeTurbulence_type=%22fractalNoise%22_baseFrequency=%220.86%22_numOctaves=%223%22_stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect_width=%22256%22_height=%22256%22_filter=%22url(%23n%22%29_opacity=%220.72%22/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.72'/%3E%3C/svg%3E");
 }
 
 .cinematic-vignette-soft {
@@ -258,10 +287,7 @@ button {
   );
 }
 
-.group:hover .marquee-track {
-  animation-play-state: paused;
-}
-
+/* ─── Misc ───────────────────────────────────────────────────────────────── */
 button {
   font: inherit;
 }
