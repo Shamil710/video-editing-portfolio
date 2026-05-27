@@ -250,7 +250,7 @@ export function HeroSection() {
   return (
     <section
       id="home"
-      className="hero-section relative z-10 flex min-h-screen flex-col overflow-hidden bg-[#050505]"
+      className="hero-section page-section relative z-10 flex min-h-screen flex-col overflow-hidden bg-[#050505]"
     >
       {/* ── Custom cursor glow ─────────────────────────────────────────────── */}
       <motion.div

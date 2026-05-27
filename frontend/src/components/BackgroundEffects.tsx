@@ -10,7 +10,7 @@ const particles = Array.from({ length: 14 }, (_, index) => ({
 
 export function BackgroundEffects() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-black">
+    <div className="background-effects-root pointer-events-none fixed inset-0 z-0 overflow-hidden bg-black">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_16%,rgba(212,175,55,0.11),transparent_24%),radial-gradient(circle_at_74%_28%,rgba(212,175,55,0.14),transparent_30%),radial-gradient(circle_at_12%_80%,rgba(224,195,106,0.07),transparent_34%),linear-gradient(135deg,#050505_0%,#080808_46%,#050505_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(212,175,55,0.045),transparent_25%),radial-gradient(circle_at_50%_65%,rgba(212,175,55,0.03),transparent_34%)]" />
       <motion.div

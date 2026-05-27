@@ -38,7 +38,7 @@ export function PortfolioSectionsClean() {
     <div className="w-full py-8 sm:py-10">
       <section
         id="about"
-        className="about-cinematic-section relative w-screen overflow-hidden bg-[#050505]"
+        className="page-section about-cinematic-section relative w-screen overflow-hidden bg-[#050505]"
       >
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -160,19 +160,19 @@ export function PortfolioSectionsClean() {
 
       <section
         id="works"
-        className="relative overflow-hidden bg-[#050505] px-4 py-[clamp(4.5rem,7vw,7.5rem)] sm:px-8 lg:px-12"
+        className="page-section relative w-screen overflow-hidden bg-[#050505] px-4 py-[clamp(4.5rem,7vw,7.5rem)] sm:px-8 lg:px-12"
       >
         <SectionAtmosphere tone="warm" />
         <div className="cinematic-grain-overlay" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto w-full max-w-[1450px]">
+        <div className="relative z-10 mx-auto w-full works-fullbleed-shell">
           <RecentWorksSection />
         </div>
       </section>
 
       <section
         id="showcase"
-        className="relative overflow-hidden bg-[#050505] px-4 pb-[clamp(4.5rem,7vw,7rem)] pt-6 sm:px-8 lg:px-12"
+        className="page-section relative overflow-hidden bg-[#050505] px-4 pb-[clamp(4.5rem,7vw,7rem)] pt-6 sm:px-8 lg:px-12"
       >
         <SectionAtmosphere tone="neutral" />
         <div
@@ -249,7 +249,7 @@ export function PortfolioSectionsClean() {
 
       <section
         id="pricing"
-        className="relative overflow-hidden bg-[#050505] px-4 py-[clamp(5rem,7vw,7rem)] sm:px-8 lg:px-12"
+        className="page-section relative overflow-hidden bg-[#050505] px-4 py-[clamp(5rem,7vw,7rem)] sm:px-8 lg:px-12"
       >
         <SectionAtmosphere tone="focused" />
         <div
@@ -332,7 +332,7 @@ export function PortfolioSectionsClean() {
 
       <section
         id="contact"
-        className="relative overflow-hidden bg-[#050505] px-4 pb-[clamp(6rem,10vw,9rem)] pt-[clamp(5rem,8vw,7rem)] sm:px-8 lg:px-12"
+        className="page-section relative overflow-hidden bg-[#050505] px-4 pb-[clamp(6rem,10vw,9rem)] pt-[clamp(5rem,8vw,7rem)] sm:px-8 lg:px-12"
       >
         <SectionAtmosphere tone="finale" />
         <div

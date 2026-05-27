@@ -54,6 +54,14 @@ section {
   scroll-margin-top: 6rem;
 }
 
+.page-section {
+  contain: layout paint style;
+  content-visibility: auto;
+  contain-intrinsic-size: 1000px 1000px;
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
 ::selection {
   background: rgba(212, 175, 55, 0.88);
   color: #050505;
@@ -102,19 +110,62 @@ button {
 /* ─── Marquee ────────────────────────────────────────────────────────────── */
 @keyframes marquee-scroll {
   0% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 .marquee-track {
   animation: marquee-scroll 32s linear infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
 }
 
 .group:hover .marquee-track {
   animation-play-state: paused;
+}
+
+/* ─── Works performance isolation ───────────────────────────────────────── */
+.works-render-scope {
+  contain: layout paint style;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.works-fullbleed-shell {
+  contain: layout paint style;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.works-ambient-layer,
+.works-grain-layer {
+  contain: paint;
+  transform: translateZ(0);
+}
+
+.works-video-shell {
+  contain: layout paint style;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.works-halo-layer {
+  contain: paint;
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}
+
+.works-progress-fill {
+  transform: translate3d(0, 0, 0) scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
 }
 
 /* ─── Scanlines (used in hero LiveEditCard preview) ──────────────────────── */
@@ -265,6 +316,13 @@ button {
   will-change: transform, filter;
 }
 
+.background-effects-root {
+  contain: paint;
+  isolation: isolate;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
 /* ─── Cinematic grain / vignette ─────────────────────────────────────────── */
 .cinematic-grain-overlay {
   position: absolute;
@@ -298,6 +356,20 @@ video {
   transform: translateZ(0);
 }
 
+@media (max-width: 640px) {
+  .works-halo-layer {
+    filter: blur(26px) !important;
+  }
+
+  .about-portrait-glow {
+    opacity: 0.84;
+  }
+
+  .gold-gradient-text {
+    text-shadow: 0 0 16px rgba(212, 175, 55, 0.14);
+  }
+}
+
 ::placeholder {
   color: rgba(255, 255, 255, 0.34);
 }
@@ -309,8 +381,20 @@ video {
 }
 
 @media (max-width: 640px) {
+  .page-section {
+    contain-intrinsic-size: 820px 820px;
+  }
+
   .text-balance {
     text-wrap: balance;
+  }
+
+  .gold-gradient-text {
+    text-shadow: 0 0 16px rgba(212, 175, 55, 0.14);
+  }
+
+  .gold-ambient-drift {
+    animation-duration: 18s;
   }
 }
 
