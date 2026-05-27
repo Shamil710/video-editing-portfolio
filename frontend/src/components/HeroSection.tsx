@@ -156,7 +156,18 @@ const SERVICES = [
   "Sound Design",
   "Retention Editing",
   "Creator Branding",
-];
+] as const;
+
+const TICKER_ITEMS = SERVICES.flatMap((service) => [
+  {
+    label: service,
+    accent:
+      service === "Brand Films" ||
+      service === "Cinematic Cuts" ||
+      service === "Color Grading" ||
+      service === "Retention Editing",
+  },
+]);
 
 const STATS = [
   { value: "9+", label: "Projects" },
@@ -472,22 +483,43 @@ export function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.9, delay: 1.5 }}
-          className="relative overflow-hidden border-t border-white/[0.055] py-[14px]"
+          className="relative overflow-hidden border-t border-white/[0.045] bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.003))] py-[15px]"
         >
           <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28
                           bg-gradient-to-r from-[#050505] to-transparent"
           />
           <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28
                           bg-gradient-to-l from-[#050505] to-transparent"
           />
-          <div className="marquee-track flex gap-10 whitespace-nowrap">
-            {[...SERVICES, ...SERVICES].map((s, i) => (
-              <span key={i} className="flex items-center gap-4">
-                <span className="h-[5px] w-[5px] rounded-full bg-[#d4af37]/45" />
-                <span className="text-[0.48rem] font-medium uppercase tracking-[0.4em] text-white/26">
-                  {s}
+          <div className="marquee-track flex gap-14 whitespace-nowrap">
+            {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+              <span
+                key={`${item.label}-${i}`}
+                className="flex items-center gap-5"
+              >
+                <span
+                  className={`h-[5px] w-[5px] rounded-full ${
+                    item.accent ? "bg-[#f0d98a]/50" : "bg-[#d4af37]/28"
+                  }`}
+                  style={{
+                    boxShadow: item.accent
+                      ? "0 0 10px rgba(240, 217, 138, 0.08)"
+                      : "none",
+                  }}
+                />
+                <span
+                  className={`text-[0.56rem] font-semibold uppercase tracking-[0.34em] ${
+                    item.accent ? "text-[#f0d98a]/88" : "text-white/50"
+                  }`}
+                  style={{
+                    textShadow: item.accent
+                      ? "0 0 10px rgba(240, 217, 138, 0.08)"
+                      : "none",
+                  }}
+                >
+                  {item.label}
                 </span>
               </span>
             ))}

@@ -21,7 +21,7 @@
     system-ui,
     -apple-system,
     sans-serif;
-  background: #000;
+  background: #050505;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -40,7 +40,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background: #000;
+  background: #050505;
   font-family:
     "Plus Jakarta Sans",
     ui-sans-serif,
@@ -118,7 +118,7 @@ button {
 }
 
 .marquee-track {
-  animation: marquee-scroll 32s linear infinite;
+  animation: marquee-scroll 48s linear infinite;
   will-change: transform;
   transform: translate3d(0, 0, 0);
 }

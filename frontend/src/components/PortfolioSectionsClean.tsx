@@ -35,7 +35,7 @@ export function PortfolioSectionsClean() {
   ] as const;
 
   return (
-    <div className="w-full py-8 sm:py-10">
+    <div className="w-full py-4 sm:py-5">
       <section
         id="about"
         className="page-section about-cinematic-section relative w-screen overflow-hidden bg-[#050505]"
@@ -71,14 +71,14 @@ export function PortfolioSectionsClean() {
             <ParticleCluster />
           </div>
 
-          <div className="about-content-container about-content-layer relative z-10 mx-auto flex min-h-screen max-w-[1500px] flex-col justify-between gap-10 px-[clamp(2rem,5vw,6rem)] py-[clamp(2rem,4.5vw,4rem)] lg:py-[clamp(2.5rem,5vw,4.5rem)]">
-            <div className="relative grid flex-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
+          <div className="about-content-container about-content-layer relative z-10 mx-auto flex min-h-screen max-w-[1500px] flex-col justify-between gap-8 px-[clamp(1.5rem,4vw,5rem)] py-[clamp(1.5rem,3.5vw,3.25rem)] lg:py-[clamp(2rem,4vw,4rem)]">
+            <div className="relative grid flex-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-10">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className="relative z-20 max-w-[25rem] self-start lg:pt-[clamp(1rem,2vw,2rem)]"
+                className="relative z-20 max-w-[25rem] self-start lg:pt-[clamp(0.75rem,1.5vw,1.5rem)]"
               >
                 <div className="inline-flex items-center border-b border-white/12 pb-2 text-[0.58rem] font-semibold uppercase tracking-[0.34em] text-champagne/90">
                   ABOUT
@@ -116,7 +116,7 @@ export function PortfolioSectionsClean() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className="relative z-20 max-w-[27rem] self-start justify-self-end pt-[clamp(1.5rem,4vw,4rem)] lg:pt-[clamp(2rem,5vw,5rem)]"
+                className="relative z-20 max-w-[27rem] self-start justify-self-end pt-[clamp(1rem,2.5vw,3rem)] lg:pt-[clamp(1.5rem,3vw,4rem)]"
               >
                 <div className="text-[0.58rem] font-semibold uppercase tracking-[0.34em] text-white/44">
                   EDITORIAL
@@ -151,7 +151,7 @@ export function PortfolioSectionsClean() {
               </motion.div>
             </div>
 
-            <div className="relative border-t border-white/8 pt-5 lg:pt-6">
+            <div className="relative border-t border-white/8 pt-8 lg:pt-10">
               <WorkflowStrip />
             </div>
           </div>
@@ -160,19 +160,19 @@ export function PortfolioSectionsClean() {
 
       <section
         id="works"
-        className="page-section relative w-screen overflow-hidden bg-[#050505] px-4 py-[clamp(4.5rem,7vw,7.5rem)] sm:px-8 lg:px-12"
+        className="page-section relative w-screen overflow-hidden bg-[#050505] px-0 py-[clamp(1rem,2vw,7rem)]"
       >
         <SectionAtmosphere tone="warm" />
         <div className="cinematic-grain-overlay" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto w-full works-fullbleed-shell">
+        <div className="relative z-10 mx-auto w-full works-fullbleed-shell px-2 sm:px-4 lg:px-9 xl:px-0">
           <RecentWorksSection />
         </div>
       </section>
 
       <section
         id="showcase"
-        className="page-section relative overflow-hidden bg-[#050505] px-4 pb-[clamp(4.5rem,7vw,7rem)] pt-6 sm:px-8 lg:px-12"
+        className="page-section relative overflow-hidden bg-[#050505] px-2 pb-[clamp(3.5rem,5.5vw,5.5rem)] pt-[clamp(1rem,2vw,2.25rem)] sm:px-4 lg:px-6 xl:px-8"
       >
         <SectionAtmosphere tone="neutral" />
         <div
@@ -249,7 +249,7 @@ export function PortfolioSectionsClean() {
 
       <section
         id="pricing"
-        className="page-section relative overflow-hidden bg-[#050505] px-4 py-[clamp(5rem,7vw,7rem)] sm:px-8 lg:px-12"
+        className="page-section relative overflow-hidden bg-[#050505] px-2 py-[clamp(3.5rem,5.25vw,5.5rem)] sm:px-4 lg:px-6 xl:px-8"
       >
         <SectionAtmosphere tone="focused" />
         <div
@@ -332,7 +332,7 @@ export function PortfolioSectionsClean() {
 
       <section
         id="contact"
-        className="page-section relative overflow-hidden bg-[#050505] px-4 pb-[clamp(6rem,10vw,9rem)] pt-[clamp(5rem,8vw,7rem)] sm:px-8 lg:px-12"
+        className="page-section relative overflow-hidden bg-[#050505] px-2 pb-[clamp(4.5rem,7vw,7rem)] pt-[clamp(3rem,5vw,5.5rem)] sm:px-4 lg:px-6 xl:px-8"
       >
         <SectionAtmosphere tone="finale" />
         <div
@@ -416,10 +416,10 @@ function WorkflowStrip() {
           style={{ left: `${itemIndex * 20}%` }}
         >
           {itemIndex > 0 ? (
-            <div className="absolute left-[-18%] top-[18px] h-px w-[18%] bg-gradient-to-r from-transparent via-bullion/70 to-bullion/0" />
+            <div className="absolute left-[-18%] top-[18px] h-px w-[18%] bg-gradient-to-r from-transparent via-bullion/55 to-bullion/0" />
           ) : null}
           <motion.div
-            className="absolute left-0 top-[15px] h-2 w-2 rounded-full bg-bullion shadow-[0_0_12px_rgba(212,175,55,0.9)]"
+            className="absolute left-0 top-[15px] h-2 w-2 rounded-full bg-bullion/90 shadow-[0_0_8px_rgba(212,175,55,0.65)]"
             animate={{ opacity: [0.6, 1, 0.6], scale: [0.9, 1.1, 0.9] }}
             transition={{
               duration: 3.6,
@@ -429,13 +429,13 @@ function WorkflowStrip() {
             }}
           />
           <div className="pl-5">
-            <div className="text-[0.58rem] font-semibold uppercase tracking-[0.34em] text-bullion/90">
+            <div className="text-[0.56rem] font-semibold uppercase tracking-[0.34em] text-bullion/78">
               {index}
             </div>
-            <div className="mt-2 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/84">
+            <div className="mt-2 text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-white/76">
               {title}
             </div>
-            <p className="mt-2 max-w-[16ch] text-[0.76rem] leading-6 text-white/48">
+            <p className="mt-2 max-w-[16ch] text-[0.75rem] leading-6 text-white/42">
               {copy}
             </p>
           </div>

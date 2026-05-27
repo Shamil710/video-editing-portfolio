@@ -15,7 +15,7 @@ function App() {
   }, []);
 
   return (
-    <main className="relative min-h-screen overflow-auto bg-black text-white selection:bg-bullion selection:text-black">
+    <main className="relative min-h-screen overflow-auto bg-[#050505] text-white selection:bg-bullion selection:text-black">
       <BackgroundEffects />
       <AnimatePresence mode="wait">
         {isLoading ? (

@@ -465,7 +465,7 @@ export function RecentWorksSection() {
       id="works"
       className="relative w-full select-none overflow-hidden bg-[#050505] text-white"
       style={{
-        padding: "clamp(3rem,7vw,7rem) clamp(1rem,5vw,4rem)",
+        padding: "clamp(1.75rem,4.5vw,5rem) clamp(0.85rem,4vw,3rem)",
         contain: "layout paint style",
         transform: "translateZ(0)",
         willChange: "transform",
@@ -490,7 +490,7 @@ export function RecentWorksSection() {
       <div className="cinematic-grain-overlay works-grain-layer" />
 
       <div
-        className="relative z-10 mx-auto w-full max-w-[1440px] works-render-scope"
+        className="relative z-10 mx-auto w-full max-w-[1680px] works-render-scope"
         style={{ contain: "layout paint style", transform: "translateZ(0)" }}
       >
         {/* ══ HEADER ══ */}
@@ -499,7 +499,7 @@ export function RecentWorksSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-12 lg:mb-16"
+          className="mb-8 lg:mb-10"
         >
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-4">
@@ -555,7 +555,7 @@ export function RecentWorksSection() {
         </motion.div>
 
         {/* ══ MAIN LAYOUT: [client list] [video player] [info panel] ══ */}
-        <div className="grid gap-8 lg:grid-cols-[240px_1fr_300px] lg:gap-6 xl:grid-cols-[260px_1fr_320px] xl:gap-8">
+        <div className="grid gap-5 lg:grid-cols-[220px_minmax(0,1.32fr)_250px] lg:gap-4 xl:grid-cols-[240px_minmax(0,1.5fr)_270px] xl:gap-6 2xl:grid-cols-[260px_minmax(0,1.62fr)_290px]">
           {/* ── LEFT: Client list (desktop) ── */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -740,7 +740,7 @@ export function RecentWorksSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-12 lg:mt-14 works-render-scope"
+          className="mt-8 lg:mt-10 works-render-scope"
           style={{ contain: "layout paint style", transform: "translateZ(0)" }}
         >
           <div
@@ -896,7 +896,7 @@ function VideoPlayer({
   );
 
   return (
-    <div className="w-full" style={{ maxWidth: 380 }}>
+    <div className="w-full" style={{ maxWidth: "clamp(460px, 30vw, 620px)" }}>
       {/* Glow halo behind player */}
       <AnimatePresence mode="wait">
         <motion.div
