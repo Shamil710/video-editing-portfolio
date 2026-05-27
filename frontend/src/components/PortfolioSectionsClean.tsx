@@ -75,7 +75,7 @@ export function PortfolioSectionsClean() {
                   </p>
                   <div className="mt-4 h-px w-[15rem] bg-gradient-to-r from-bullion/0 via-bullion/80 to-bullion/0" />
                   <p className="mt-3 text-[0.58rem] font-semibold uppercase tracking-[0.44em] text-white/48">
-                    CONTENT CREATOR • EDITOR
+                    EDITOR • CONTENT CREATOR
                   </p>
                 </div>
               </motion.div>
@@ -129,7 +129,7 @@ export function PortfolioSectionsClean() {
 
       <section
         id="works"
-        className="page-section relative w-screen overflow-hidden bg-[#050505] px-0 py-[clamp(1rem,2vw,7rem)]"
+        className="page-section relative w-screen overflow-hidden bg-[#050505] px-0 py-[clamp(0em,0vw,7rem)]"
       >
         <SectionAtmosphere tone="warm" />
         <div className="cinematic-grain-overlay" aria-hidden="true" />

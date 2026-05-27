@@ -199,6 +199,20 @@ const reels: ReelItem[] = [
     glow: "#f0ce79",
     index: "09",
   },
+  {
+    id: "golden-hour",
+    title: "Golden Hour Sequence",
+    category: "Brand Film",
+    duration: "0:37",
+    client: "Luxury Brands",
+    clientType: "Brand Storytelling",
+    note: "A warm, golden cut with a focus on mood and cinematic rhythm.",
+    tags: ["Mood", "Cinematic", "Luxury"],
+    src: sequencefourteenReel,
+    tone: "#0a0a0a",
+    glow: "#e2c56a",
+    index: "10",
+  },
 ];
 
 /* ── Poster helpers ──────────────────────────────────────────────────────── */
@@ -528,7 +542,7 @@ export function RecentWorksSection() {
             {/* stats row */}
             <div className="flex gap-8 sm:gap-10 shrink-0 pb-1">
               {[
-                { value: "9+", label: "Projects" },
+                { value: "50+", label: "Projects" },
                 { value: "4", label: "Categories" },
                 { value: "100%", label: "Client Trust" },
               ].map(({ value, label }) => (

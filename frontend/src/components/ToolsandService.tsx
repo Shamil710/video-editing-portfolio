@@ -708,8 +708,8 @@ export function ToolsAndServices() {
           <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-20">
             {[
               { num: "5+", label: "Pro Tools" },
-              { num: "3yr", label: "Experience" },
-              { num: "100+", label: "Projects Done" },
+              { num: "1yr", label: "Experience" },
+              { num: "50+", label: "Projects Done" },
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <p

@@ -664,7 +664,7 @@ export function PricingContactFooter() {
           {/* Trust bar */}
           <div className="flex justify-center gap-8 mb-14 flex-wrap">
             {[
-              "100+ Projects Delivered",
+              "50+ Projects Delivered",
               "48hr Turnaround",
               "2 Free Revisions",
               "Secure Payment",
@@ -790,9 +790,9 @@ export function PricingContactFooter() {
               style={{ background: "rgba(255,255,255,0.08)" }}
             />
             {[
-              { num: "100+", label: "Happy Clients" },
-              { num: "500+", label: "Videos Delivered" },
-              { num: "3yr", label: "In The Game" },
+              { num: "10+", label: "Happy Clients" },
+              { num: "50+", label: "Videos Delivered" },
+              { num: "1yr", label: "In The Game" },
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <p
