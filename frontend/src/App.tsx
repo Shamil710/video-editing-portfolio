@@ -6,6 +6,7 @@ import { LoaderScreen } from "./components/LoaderScreen";
 import { Navbar } from "./components/Navbar";
 import { PortfolioSectionsClean } from "./components/PortfolioSectionsClean";
 import { ToolsAndServices } from "./components/ToolsandService";
+import { PricingContactFooter } from "./components/pricingandcontact";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +33,7 @@ function App() {
             <HeroSection />
             <PortfolioSectionsClean />
             <ToolsAndServices />
+            <PricingContactFooter />
           </motion.div>
         )}
       </AnimatePresence>
