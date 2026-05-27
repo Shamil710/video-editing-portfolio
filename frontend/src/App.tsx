@@ -5,6 +5,7 @@ import { HeroSection } from "./components/HeroSection";
 import { LoaderScreen } from "./components/LoaderScreen";
 import { Navbar } from "./components/Navbar";
 import { PortfolioSectionsClean } from "./components/PortfolioSectionsClean";
+import { ToolsAndServices } from "./components/ToolsandService";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +31,7 @@ function App() {
             <Navbar />
             <HeroSection />
             <PortfolioSectionsClean />
+            <ToolsAndServices />
           </motion.div>
         )}
       </AnimatePresence>
