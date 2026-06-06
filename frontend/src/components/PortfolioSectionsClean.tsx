@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { RecentWorksSection } from "./RecentWorksSection";
+
+import RecentWorksSection from "../components/RecentWorksSection";
 import portrait from "../images/ChatGPT Image May 25, 2026, 11_32_07 PM.png";
 
 export function PortfolioSectionsClean() {
@@ -134,7 +135,7 @@ export function PortfolioSectionsClean() {
         <SectionAtmosphere tone="warm" />
         <div className="cinematic-grain-overlay" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto w-full works-fullbleed-shell px-2 sm:px-4 lg:px-9 xl:px-0">
+        <div className="relative z-10 mx-auto w-full works-fullbleed-shell">
           <RecentWorksSection />
         </div>
       </section>

@@ -1,75 +1,24 @@
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Volume2,
-  VolumeX,
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Film,
-} from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type SyntheticEvent,
-} from "react";
-
-import firstReel from "../videos/First reel.mp4";
-import secondReel from "../videos/Second reel.mp4";
-import sequenceFiveReel from "../videos/Sequence 01_5.mp4";
-import sequenceNineReel from "../videos/Sequence 01_9.mp4";
-import sequenceTenReel from "../videos/Sequence 01_10.mp4";
-import sequenceElevenReel from "../videos/Sequence 01_11.mp4";
-import img0553Reel from "../videos/IMG_0553.MP4";
-import divorceFinalReel from "../videos/divorce final.mp4";
-import dhanushReel from "../videos/dhanush final.mp4";
-import sequencefourteenReel from "../videos/Sequence 01_14.mp4";
+import { Film, Play, ArrowUpRight, Sparkles } from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export const WORKS_VISIBILITY_EVENT = "works-viewport-change";
 
-type PlaybackMetrics = {
-  progress: number;
-  currentTime: string;
-};
-
-const playbackMetricsStore = (() => {
-  let snapshot: PlaybackMetrics = { progress: 0, currentTime: "0:00" };
-  const listeners = new Set<() => void>();
-
-  return {
-    getSnapshot: () => snapshot,
-    subscribe: (listener: () => void) => {
-      listeners.add(listener);
-      return () => {
-        listeners.delete(listener);
-      };
-    },
-    setSnapshot: (next: PlaybackMetrics) => {
-      snapshot = next;
-      listeners.forEach((listener) => listener());
-    },
-    reset: () => {
-      snapshot = { progress: 0, currentTime: "0:00" };
-      listeners.forEach((listener) => listener());
-    },
-  };
-})();
-
+/* ══════════════════════════════════════════════════════════════════
+   DATA
+   ══════════════════════════════════════════════════════════════════ */
 type ReelItem = {
   id: string;
   title: string;
   category: string;
-  duration: string;
   client: string;
   clientType: string;
   note: string;
   tags: string[];
-  src: string;
-  tone: string;
+  videoUrl: string;
   glow: string;
   index: string;
+  shortUrl: string;
 };
 
 const reels: ReelItem[] = [
@@ -77,1193 +26,955 @@ const reels: ReelItem[] = [
     id: "launch-cut",
     title: "Luxury Launch Cut",
     category: "Brand Film",
-    duration: "0:38",
     client: "Commercial Brands",
     clientType: "Product Launch",
     note: "A crisp launch film with premium pacing and refined visual rhythm.",
     tags: ["Motion", "Luxury", "Launch"],
-    src: firstReel,
-    tone: "#0d0b06",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730810/dhanush_final_y1amca.mp4",
     glow: "#d4af37",
     index: "01",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730810/dhanush_final_y1amca.mp4",
   },
   {
     id: "motion-story",
     title: "Motion Story Sequence",
     category: "Editorial Cut",
-    duration: "0:42",
     client: "Creator Brands",
     clientType: "Social Content",
     note: "Cleaner social-first storytelling with stronger retention rhythm.",
     tags: ["Story", "Retention", "Editorial"],
-    src: secondReel,
-    tone: "#090b0f",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730829/First_reel_efh1bi.mp4",
     glow: "#e2c56a",
     index: "02",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730829/First_reel_efh1bi.mp4",
   },
   {
     id: "after-dark",
     title: "After Dark Editorial",
     category: "Studio Motion",
-    duration: "0:36",
     client: "Fashion Labels",
     clientType: "Editorial Motion",
     note: "High contrast, restrained grade work, and a cinematic fashion mood.",
     tags: ["Fashion", "Mood", "Film"],
-    src: sequenceFiveReel,
-    tone: "#080808",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730877/IMG_0553_i5jowa.mp4",
     glow: "#c89b2d",
     index: "03",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730877/IMG_0553_i5jowa.mp4",
   },
   {
     id: "pulse-nine",
     title: "Pulse Nine Cut",
     category: "Commercial Reel",
-    duration: "0:33",
     client: "Launch Campaigns",
     clientType: "Commercial",
     note: "Rhythm-first motion with smoother transitions and tighter framing.",
     tags: ["Studio", "Motion", "Flow"],
-    src: sequenceNineReel,
-    tone: "#0a0a0a",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730940/Sequence_01_4_aulsiz.mp4",
     glow: "#f0d98a",
     index: "04",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730940/Sequence_01_4_aulsiz.mp4",
   },
   {
     id: "rhythm-build",
     title: "Rhythm Build Cut",
     category: "Brand Film",
-    duration: "0:29",
     client: "Premium Creators",
     clientType: "Brand Film",
     note: "Compact story pacing with a polished visual pulse.",
     tags: ["Product", "Story", "Commercial"],
-    src: sequenceTenReel,
-    tone: "#0d0d0d",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730949/Second_reel_pxl3er.mp4",
     glow: "#b88d2b",
     index: "05",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780730949/Second_reel_pxl3er.mp4",
   },
   {
     id: "glow-frame",
     title: "Glow Frame Edit",
     category: "Editorial Cut",
-    duration: "0:31",
     client: "Lifestyle Brands",
     clientType: "Luxury Content",
     note: "Soft light, luxury movement, and a cinematic frame rhythm.",
     tags: ["Lifestyle", "Luxury", "Frame"],
-    src: sequenceElevenReel,
-    tone: "#101010",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731100/Sequence_01_14_uapgjl.mp4",
     glow: "#ddc06d",
     index: "06",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731100/Sequence_01_14_uapgjl.mp4",
   },
   {
     id: "signature-story",
     title: "Signature Story Film",
     category: "Studio Motion",
-    duration: "0:45",
     client: "Motion Studios",
     clientType: "Identity Film",
     note: "A signature cut designed like a luxury motion study.",
     tags: ["Signature", "Narrative", "Brand"],
-    src: dhanushReel,
-    tone: "#090909",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731118/Sequence_01_10_eqlqvb.mp4",
     glow: "#f2dc8a",
     index: "07",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731118/Sequence_01_10_eqlqvb.mp4",
   },
   {
     id: "studio-frame",
     title: "Studio Frame Reel",
     category: "Editorial Cut",
-    duration: "0:28",
     client: "Cinematic Launches",
     clientType: "Launch Visuals",
     note: "Camera-led framing with clean lines and deliberate pacing.",
     tags: ["Editorial", "Studio", "Frame"],
-    src: img0553Reel,
-    tone: "#101010",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731111/Sequence_01_11_ah1ro4.mp4",
     glow: "#efd47f",
     index: "08",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731111/Sequence_01_11_ah1ro4.mp4",
   },
   {
     id: "breakaway",
     title: "Breakaway Film",
     category: "Commercial Reel",
-    duration: "0:41",
     client: "Narrative Projects",
     clientType: "Short Film",
     note: "Moody motion with softer contrast and more dramatic beats.",
     tags: ["Atmosphere", "Story", "Film"],
-    src: divorceFinalReel,
-    tone: "#0c0c0c",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731122/Sequence_01_9_aa7tgt.mp4",
     glow: "#f0ce79",
     index: "09",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731122/Sequence_01_9_aa7tgt.mp4",
   },
   {
     id: "golden-hour",
     title: "Golden Hour Sequence",
     category: "Brand Film",
-    duration: "0:37",
     client: "Luxury Brands",
     clientType: "Brand Storytelling",
     note: "A warm, golden cut with a focus on mood and cinematic rhythm.",
     tags: ["Mood", "Cinematic", "Luxury"],
-    src: sequencefourteenReel,
-    tone: "#0a0a0a",
+    videoUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731131/Sequence_01_5_jjqhc1.mp4",
     glow: "#e2c56a",
     index: "10",
+    shortUrl:
+      "https://res.cloudinary.com/dqcnj05ch/video/upload/f_auto,q_auto/v1780731131/Sequence_01_5_jjqhc1.mp4",
   },
 ];
 
-/* ── Poster helpers ──────────────────────────────────────────────────────── */
-function escapeXml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
+const getPosterUrl = (videoUrl: string) => videoUrl.replace(/\.mp4$/, ".jpg");
 
-function makeFallbackPoster(reel: ReelItem) {
-  const title = escapeXml(reel.title);
-  const client = escapeXml(reel.client);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="0.32" y2="1">
-        <stop offset="0%" stop-color="#040404" />
-        <stop offset="52%" stop-color="${reel.tone}" />
-        <stop offset="100%" stop-color="${reel.glow}" stop-opacity="0.38" />
-      </linearGradient>
-      <radialGradient id="halo" cx="50%" cy="28%" r="58%">
-        <stop offset="0%" stop-color="${reel.glow}" stop-opacity="0.24" />
-        <stop offset="100%" stop-color="${reel.glow}" stop-opacity="0" />
-      </radialGradient>
-    </defs>
-    <rect width="900" height="1600" fill="url(#bg)" />
-    <rect width="900" height="1600" fill="url(#halo)" />
-    <rect x="64" y="76" width="180" height="2" rx="1" fill="${reel.glow}" fill-opacity="0.72" />
-    <rect x="64" y="1442" width="772" height="1.5" rx="1" fill="${reel.glow}" fill-opacity="0.2" />
-    <text x="64" y="1474" fill="white" fill-opacity="0.94" font-family="Arial" font-size="56" font-weight="700">${title}</text>
-    <text x="64" y="1528" fill="${reel.glow}" fill-opacity="0.84" font-family="Arial" font-size="22" font-weight="600" letter-spacing="7">${client}</text>
-  </svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-}
+const reelLayoutVariants: Array<"tall" | "wide" | "square"> = [
+  "tall",
+  "square",
+  "wide",
+  "square",
+  "tall",
+  "square",
+  "wide",
+  "tall",
+  "square",
+  "square",
+];
 
-function capturePosterFrame(src: string) {
-  return new Promise<string | null>((resolve) => {
-    const video = document.createElement("video");
-    video.preload = "metadata";
-    video.muted = true;
-    video.playsInline = true;
-    video.src = src;
-
-    const finish = (value: string | null) => {
-      video.removeAttribute("src");
-      video.load();
-      resolve(value);
-    };
-
-    const onLoadedMetadata = () => {
-      const seekTo = Math.min(0.12, Math.max(0, (video.duration || 0) * 0.05));
-      const onSeeked = () => {
-        try {
-          const canvas = document.createElement("canvas");
-          canvas.width = 540;
-          canvas.height = 960;
-          const context = canvas.getContext("2d");
-          if (!context) {
-            finish(null);
-            return;
-          }
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-          finish(canvas.toDataURL("image/jpeg", 0.84));
-        } catch {
-          finish(null);
-        }
-      };
-      video.addEventListener("seeked", onSeeked, { once: true });
-      try {
-        video.currentTime = seekTo;
-      } catch {
-        finish(null);
-      }
-    };
-
-    video.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
-    video.addEventListener("error", () => finish(null), { once: true });
-    video.load();
-  });
-}
-
-function usePosterSources(reelItems: ReelItem[]) {
-  const [generatedPosters, setGeneratedPosters] = useState<
-    Record<string, string>
-  >({});
+/* ══════════════════════════════════════════════════════════════════
+   CLOUDINARY HTML5 PLAYER
+   — Shows static thumbnail until user taps. 
+   - Only one video mounts at a time (the active reel).
+   - On selection change, previous playback is paused, the source loads,
+     and the new reel autoplays inline.
+   ══════════════════════════════════════════════════════════════════ */
+const CloudinaryVideoPlayer = memo(function CloudinaryVideoPlayer({
+  reel,
+}: {
+  reel: ReelItem;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isReady, setIsReady] = useState(false);
+  const posterUrl = useMemo(() => getPosterUrl(reel.videoUrl), [reel.videoUrl]);
+  const activated = true;
+  const setActivated = useCallback((_active: boolean) => undefined, []);
+  const thumbHq = posterUrl;
+  const thumbMax = posterUrl;
 
   useEffect(() => {
-    let cancelled = false;
-    const run = async () => {
-      for (const reel of reelItems) {
-        const poster = await capturePosterFrame(reel.src);
-        if (!poster || cancelled) continue;
-        setGeneratedPosters((current) => {
-          if (current[reel.id]) return current;
-          return { ...current, [reel.id]: poster };
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.pause();
+    setIsReady(false);
+    video.load();
+
+    const frame = window.requestAnimationFrame(() => {
+      const playPromise = video.play();
+      if (playPromise) {
+        playPromise.catch(() => {
+          // Muted inline playback is allowed in modern browsers; ignore rare policy races.
         });
       }
-    };
-    void run();
+    });
+
     return () => {
-      cancelled = true;
+      window.cancelAnimationFrame(frame);
+      video.pause();
     };
-  }, [reelItems]);
+  }, [reel.videoUrl]);
 
-  return generatedPosters;
-}
-
-/* ── Film Strip Decoration ───────────────────────────────────────────────── */
-function FilmStripDots({ count = 7, glow }: { count?: number; glow: string }) {
-  return (
-    <div className="flex gap-[5px] items-center">
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="w-[7px] h-[5px] rounded-[1px]"
-          style={{ background: i === 3 ? glow : "rgba(255,255,255,0.12)" }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ── Animated film-reel corner ornament ─────────────────────────────────── */
-function ReelOrnament({ glow }: { glow: string }) {
-  return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-      className="w-10 h-10 relative"
-    >
-      <svg
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
-      >
-        <circle
-          cx="20"
-          cy="20"
-          r="18"
-          stroke={glow}
-          strokeOpacity="0.28"
-          strokeWidth="1"
-        />
-        <circle
-          cx="20"
-          cy="20"
-          r="11"
-          stroke={glow}
-          strokeOpacity="0.18"
-          strokeWidth="1"
-        />
-        <circle cx="20" cy="20" r="3" fill={glow} fillOpacity="0.5" />
-        {[0, 60, 120, 180, 240, 300].map((angle, i) => {
-          const rad = (angle * Math.PI) / 180;
-          const x = 20 + 14.5 * Math.cos(rad);
-          const y = 20 + 14.5 * Math.sin(rad);
-          return (
-            <circle
-              key={i}
-              cx={x}
-              cy={y}
-              r="2.2"
-              fill={glow}
-              fillOpacity="0.42"
-            />
-          );
-        })}
-      </svg>
-    </motion.div>
-  );
-}
-
-/* ── Scan-line overlay ───────────────────────────────────────────────────── */
-function ScanlineOverlay() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-10"
-      style={{
-        backgroundImage:
-          "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)",
-      }}
-    />
-  );
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   MAIN SECTION
-══════════════════════════════════════════════════════════════════════════ */
-export function RecentWorksSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
-  const [isSectionVisible, setIsSectionVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement | null>(null);
-
-  const total = reels.length;
-  const activeReel = reels[activeIndex];
-  const posterMap = usePosterSources(reels);
-
-  const fallbackPosters = useMemo(
-    () =>
-      Object.fromEntries(
-        reels.map((reel) => [reel.id, makeFallbackPoster(reel)]),
-      ),
-    [],
-  );
-
-  const posterFor = useCallback(
-    (reel: ReelItem) => posterMap[reel.id] ?? fallbackPosters[reel.id],
-    [fallbackPosters, posterMap],
-  );
-
-  const prev = useCallback(
-    () => setActiveIndex((i) => (i - 1 + total) % total),
-    [total],
-  );
-  const next = useCallback(
-    () => setActiveIndex((i) => (i + 1) % total),
-    [total],
-  );
-  const onSelect = useCallback((index: number) => setActiveIndex(index), []);
-
-  useEffect(() => {
-    setIsMuted(true);
-  }, [activeReel.id]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSectionVisible(entry.isIntersecting);
-        window.dispatchEvent(
-          new CustomEvent(WORKS_VISIBILITY_EVENT, {
-            detail: { inView: entry.isIntersecting },
-          }),
-        );
-      },
-      { threshold: 0.18, rootMargin: "-8% 0px -22% 0px" },
-    );
-    const node = sectionRef.current;
-    if (node) observer.observe(node);
-    return () => {
-      if (node) observer.unobserve(node);
-      observer.disconnect();
-      window.dispatchEvent(
-        new CustomEvent(WORKS_VISIBILITY_EVENT, { detail: { inView: false } }),
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
-    };
-    window.addEventListener("keydown", handleKeydown);
-    return () => window.removeEventListener("keydown", handleKeydown);
-  }, [next, prev]);
-
-  return (
-    <section
-      ref={sectionRef}
-      id="works"
-      className="relative w-full select-none overflow-hidden bg-[#050505] text-white"
-      style={{
-        padding: "clamp(1.75rem,4.5vw,5rem) clamp(0.85rem,4vw,3rem)",
-        contain: "layout paint style",
-        transform: "translateZ(0)",
-        willChange: "transform",
-      }}
+      className="relative w-full h-full bg-black"
+      style={{ borderRadius: "inherit" }}
     >
-      {/* ── Background atmosphere ── */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeReel.id + "-bg"}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.2 }}
-          className="pointer-events-none absolute inset-0 works-ambient-layer"
-          style={{
-            background: `radial-gradient(ellipse 70% 55% at 50% 40%, ${activeReel.glow}0d 0%, transparent 70%)`,
-          }}
-        />
-      </AnimatePresence>
+      {/* ── Thumbnail layer (always rendered for instant visual) ── */}
+      <AnimatePresence>
+        {!activated && (
+          <motion.div
+            key="thumb"
+            className="absolute inset-0 z-10 cursor-pointer overflow-hidden"
+            style={{ borderRadius: "inherit" }}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setActivated(true)}
+          >
+            {/* thumbnail image */}
+            <img
+              src={thumbMax}
+              alt={reel.title}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = thumbHq;
+              }}
+            />
 
-      {/* ── Grain ── */}
-      <div className="cinematic-grain-overlay works-grain-layer" />
+            {/* scrim */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.6) 100%)",
+              }}
+            />
 
-      <div
-        className="relative z-10 mx-auto w-full max-w-[1680px] works-render-scope"
-        style={{ contain: "layout paint style", transform: "translateZ(0)" }}
-      >
-        {/* ══ HEADER ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-8 lg:mb-10"
-        >
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div className="space-y-4">
-              {/* eyebrow */}
-              <div className="flex items-center gap-3">
-                <Film size={11} className="text-[#d4af37]/60" />
-                <span className="text-[0.55rem] font-semibold uppercase tracking-[0.48em] text-[#d4af37]/60">
-                  Selected Client Work
-                </span>
-              </div>
-
-              <h2
-                className="font-display leading-[0.86] tracking-[-0.07em] text-white"
-                style={{
-                  fontSize: "clamp(2.6rem,5.5vw,6rem)",
-                  fontFamily: "'General Sans', sans-serif",
-                  fontWeight: 700,
-                }}
+            {/* play button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <motion.div
+                className="relative flex items-center justify-center"
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ width: 64, height: 64 }}
               >
-                Work that <span className="gold-gradient-text">moves</span>
-                <br />
-                people forward.
-              </h2>
+                {/* outer pulse ring */}
+                <motion.div
+                  className="absolute inset-0 rounded-full"
+                  style={{ border: `1.5px solid ${reel.glow}60` }}
+                  animate={{ scale: [1, 1.18, 1], opacity: [0.7, 0, 0.7] }}
+                  transition={{
+                    duration: 2.4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+                {/* button body */}
+                <div
+                  className="relative z-10 flex items-center justify-center w-14 h-14 rounded-full"
+                  style={{
+                    background: `linear-gradient(135deg, ${reel.glow}30, ${reel.glow}10)`,
+                    border: `1.5px solid ${reel.glow}80`,
+                    boxShadow: `0 0 28px ${reel.glow}40, 0 8px 32px rgba(0,0,0,0.6)`,
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <Play
+                    size={20}
+                    fill={reel.glow}
+                    style={{ color: reel.glow, marginLeft: 3 }}
+                  />
+                </div>
+              </motion.div>
             </div>
 
-            {/* stats row */}
-            <div className="flex gap-8 sm:gap-10 shrink-0 pb-1">
+            {/* bottom badge */}
+            <div className="absolute bottom-4 left-4 right-4">
+              <p
+                className="text-[9px] font-bold uppercase tracking-[0.3em] mb-1"
+                style={{ color: `${reel.glow}cc` }}
+              >
+                {reel.clientType}
+              </p>
+              <p
+                className="text-white text-[13px] font-semibold leading-tight tracking-tight"
+                style={{ fontFamily: "'General Sans', sans-serif" }}
+              >
+                {reel.title}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cloudinary video - only the active reel mounts */}
+      {activated && (
+        <motion.div
+          key="cloudinary-video"
+          className="absolute inset-0 z-20"
+          style={{ borderRadius: "inherit" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25 }}
+        >
+          <video
+            ref={videoRef}
+            src={reel.videoUrl}
+            poster={posterUrl}
+            className="w-full h-full object-cover"
+            style={{
+              borderRadius: "inherit",
+              opacity: isReady ? 1 : 0.22,
+              transition: "opacity 280ms cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
+            autoPlay
+            muted
+            playsInline
+            preload="metadata"
+            loop
+            aria-label={reel.title}
+            onCanPlay={() => setIsReady(true)}
+            onLoadedData={() => setIsReady(true)}
+          />
+        </motion.div>
+      )}
+    </div>
+  );
+});
+
+/* ══════════════════════════════════════════════════════════════════
+   GRID THUMBNAIL CARD  (left grid wall)
+   ══════════════════════════════════════════════════════════════════ */
+const GridCard = memo(function GridCard({
+  reel,
+  reelIndex,
+  isActive,
+  onClick,
+  layoutVariant,
+}: {
+  reel: ReelItem;
+  reelIndex: number;
+  isActive: boolean;
+  onClick: (index: number) => void;
+  layoutVariant: "tall" | "wide" | "square";
+}) {
+  const thumbUrl = useMemo(() => getPosterUrl(reel.videoUrl), [reel.videoUrl]);
+  const handleClick = useCallback(
+    () => onClick(reelIndex),
+    [onClick, reelIndex],
+  );
+
+  return (
+    <motion.button
+      type="button"
+      onClick={handleClick}
+      className="relative group overflow-hidden cursor-pointer text-left w-full h-full"
+      style={{
+        borderRadius: 12,
+        border: isActive
+          ? `1.5px solid ${reel.glow}80`
+          : "1.5px solid rgba(255,255,255,0.07)",
+        outline: "none",
+      }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* thumbnail */}
+      <img
+        src={thumbUrl}
+        alt={reel.title}
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+
+      {/* base overlay */}
+      <div
+        className="absolute inset-0 transition-opacity duration-300"
+        style={{
+          background: isActive
+            ? `linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%)`
+            : "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.75) 100%)",
+        }}
+      />
+
+      {/* active gold shimmer border */}
+      {isActive && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{ borderRadius: 11 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              borderRadius: 11,
+              boxShadow: `inset 0 0 20px ${reel.glow}25`,
+              background: `linear-gradient(135deg, ${reel.glow}12, transparent 60%)`,
+            }}
+          />
+        </motion.div>
+      )}
+
+      {/* index badge */}
+      <div
+        className="absolute top-2.5 left-2.5 text-[9px] font-bold tracking-[0.2em]"
+        style={{ color: isActive ? reel.glow : "rgba(255,255,255,0.35)" }}
+      >
+        {reel.index}
+      </div>
+
+      {/* play icon — shown on hover */}
+      <div
+        className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        style={{
+          background: "rgba(0,0,0,0.5)",
+          border: `1px solid ${reel.glow}50`,
+        }}
+      >
+        <Play
+          size={8}
+          fill={reel.glow}
+          style={{ color: reel.glow, marginLeft: 1 }}
+        />
+      </div>
+
+      {/* bottom info — only on tall/square */}
+      {layoutVariant !== "wide" && (
+        <div className="absolute bottom-0 left-0 right-0 p-2.5">
+          <p
+            className="text-[8px] font-bold uppercase tracking-[0.25em] truncate mb-0.5"
+            style={{ color: `${reel.glow}bb` }}
+          >
+            {reel.clientType}
+          </p>
+          <p
+            className="text-white text-[10px] font-semibold leading-tight tracking-tight truncate"
+            style={{ fontFamily: "'General Sans', sans-serif" }}
+          >
+            {reel.title}
+          </p>
+        </div>
+      )}
+
+      {/* active indicator dot */}
+      {isActive && (
+        <motion.div
+          className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full"
+          style={{ background: reel.glow, boxShadow: `0 0 8px ${reel.glow}` }}
+          layoutId="active-dot"
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        />
+      )}
+    </motion.button>
+  );
+});
+
+/* ══════════════════════════════════════════════════════════════════
+   MAIN EXPORT
+   ══════════════════════════════════════════════════════════════════ */
+export default function RecentWorksSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const activeReel = reels[activeIndex];
+
+  const handleSelect = useCallback((i: number) => {
+    setActiveIndex((current) => (current === i ? current : i));
+  }, []);
+
+  // keyboard nav
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft")
+        setActiveIndex((i) => (i - 1 + reels.length) % reels.length);
+      if (e.key === "ArrowDown" || e.key === "ArrowRight")
+        setActiveIndex((i) => (i + 1) % reels.length);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Grid layout variants cycle for visual variety
+  return (
+    <section
+      id="works"
+      ref={sectionRef}
+      className="relative overflow-hidden"
+      style={{ background: "#050505", padding: "80px 0 100px" }}
+    >
+      {/* ── ambient background ── */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 transition-all duration-1000"
+        style={{
+          background: `radial-gradient(ellipse 70% 60% at 65% 50%, ${activeReel.glow}09, transparent 65%)`,
+        }}
+      />
+      <div className="cinematic-grain-overlay" />
+
+      <div
+        className="relative z-10 mx-auto w-full"
+        style={{ maxWidth: 1320, padding: "0 20px" }}
+      >
+        {/* ════════════════════════════════════════════
+            HEADER ROW
+            ════════════════════════════════════════════ */}
+        <div className="flex flex-col gap-6 mb-10" style={{}}>
+          {/* label */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-3"
+          >
+            <span
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.42em]"
+              style={{ color: activeReel.glow }}
+            >
+              <Film size={11} />
+              Selected Client Work
+            </span>
+            <div
+              className="flex-1 h-px"
+              style={{
+                background: `linear-gradient(90deg, ${activeReel.glow}50, transparent)`,
+                maxWidth: 120,
+              }}
+            />
+          </motion.div>
+
+          {/* title + stats row */}
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <motion.h2
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.07 }}
+              className="text-white font-bold leading-[0.92] tracking-[-0.05em]"
+              style={{
+                fontFamily: "'General Sans', sans-serif",
+                fontSize: "clamp(2.2rem, 5.5vw, 4.2rem)",
+              }}
+            >
+              Work that <span className="gold-gradient-text">moves</span>
+              <br />
+              people forward.
+            </motion.h2>
+
+            {/* stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: 0.18 }}
+              className="flex items-center gap-8 shrink-0 pb-1"
+            >
               {[
-                { value: "50+", label: "Projects" },
-                { value: "4", label: "Categories" },
-                { value: "100%", label: "Client Trust" },
-              ].map(({ value, label }) => (
-                <div key={label} className="text-center">
+                { v: "50+", l: "Projects" },
+                { v: "4", l: "Categories" },
+                { v: "100%", l: "Client Trust" },
+              ].map((s) => (
+                <div key={s.l} className="text-center">
                   <p
-                    className="font-display text-[clamp(1.6rem,3vw,2.6rem)] font-semibold tracking-[-0.06em] text-white"
-                    style={{ fontFamily: "'General Sans', sans-serif" }}
+                    className="text-white font-bold leading-none tracking-[-0.06em]"
+                    style={{
+                      fontFamily: "'General Sans', sans-serif",
+                      fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
+                    }}
                   >
-                    {value}
+                    {s.v}
                   </p>
-                  <p className="mt-0.5 text-[0.48rem] font-semibold uppercase tracking-[0.36em] text-white/36">
-                    {label}
+                  <p
+                    className="mt-1 font-semibold uppercase tracking-[0.3em]"
+                    style={{ fontSize: 8, color: "rgba(255,255,255,0.3)" }}
+                  >
+                    {s.l}
                   </p>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
-
-          {/* divider with film strip holes */}
-          <div className="mt-8 flex items-center gap-4">
-            <FilmStripDots count={9} glow={activeReel.glow} />
-            <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
-          </div>
-        </motion.div>
-
-        {/* ══ MAIN LAYOUT: [client list] [video player] [info panel] ══ */}
-        <div className="grid gap-5 lg:grid-cols-[220px_minmax(0,1.32fr)_250px] lg:gap-4 xl:grid-cols-[240px_minmax(0,1.5fr)_270px] xl:gap-6 2xl:grid-cols-[260px_minmax(0,1.62fr)_290px]">
-          {/* ── LEFT: Client list (desktop) ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-            className="hidden lg:flex lg:flex-col lg:gap-1"
-          >
-            <p className="mb-4 text-[0.46rem] font-semibold uppercase tracking-[0.42em] text-white/28">
-              Client Projects
-            </p>
-            {reels.map((reel, index) => {
-              const active = index === activeIndex;
-              return (
-                <button
-                  key={reel.id}
-                  type="button"
-                  onClick={() => onSelect(index)}
-                  className="group relative flex items-center gap-3 rounded-xl px-3 py-3 text-left transition-all duration-200"
-                  style={{
-                    background: active ? `${reel.glow}0f` : "transparent",
-                    border: active
-                      ? `1px solid ${reel.glow}28`
-                      : "1px solid transparent",
-                  }}
-                >
-                  {/* index number */}
-                  <span
-                    className="shrink-0 w-7 text-center text-[0.45rem] font-semibold tabular-nums transition-colors duration-200"
-                    style={{
-                      color: active ? reel.glow : "rgba(255,255,255,0.22)",
-                    }}
-                  >
-                    {reel.index}
-                  </span>
-
-                  {/* thumbnail */}
-                  <div
-                    className="shrink-0 overflow-hidden rounded-md"
-                    style={{
-                      width: 32,
-                      height: 44,
-                      border: active
-                        ? `1px solid ${reel.glow}40`
-                        : "1px solid rgba(255,255,255,0.08)",
-                    }}
-                  >
-                    <img
-                      src={posterFor(reel)}
-                      alt=""
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="truncate text-[0.72rem] font-semibold leading-tight tracking-[-0.02em] transition-colors duration-200"
-                      style={{
-                        color: active ? "#fff" : "rgba(255,255,255,0.52)",
-                      }}
-                    >
-                      {reel.client}
-                    </p>
-                    <p
-                      className="mt-0.5 text-[0.42rem] font-medium uppercase tracking-[0.28em] transition-colors duration-200"
-                      style={{
-                        color: active ? reel.glow : "rgba(255,255,255,0.24)",
-                      }}
-                    >
-                      {reel.clientType}
-                    </p>
-                  </div>
-
-                  {/* active indicator bar */}
-                  {active && (
-                    <motion.div
-                      layoutId="client-active-bar"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full"
-                      style={{ height: "60%", background: activeReel.glow }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </motion.div>
-
-          {/* ── CENTER: Video Player ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 0.8,
-              ease: [0.22, 1, 0.36, 1],
-              delay: 0.05,
-            }}
-            className="flex flex-col items-center"
-          >
-            <VideoPlayer
-              reel={activeReel}
-              poster={posterFor(activeReel)}
-              onPrev={prev}
-              onNext={next}
-              isMuted={isMuted}
-              isSectionVisible={isSectionVisible}
-              onToggleMute={() => setIsMuted((v) => !v)}
-            />
-
-            {/* ── Mobile: horizontal client strip ── */}
-            <div className="mt-6 w-full lg:hidden">
-              <p className="mb-3 text-[0.46rem] font-semibold uppercase tracking-[0.42em] text-white/28">
-                Client Projects
-              </p>
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {reels.map((reel, index) => {
-                  const active = index === activeIndex;
-                  return (
-                    <button
-                      key={reel.id}
-                      type="button"
-                      onClick={() => onSelect(index)}
-                      className="group shrink-0 flex flex-col items-center gap-1.5 rounded-xl p-2 transition-all duration-200"
-                      style={{
-                        background: active
-                          ? `${reel.glow}12`
-                          : "rgba(255,255,255,0.03)",
-                        border: active
-                          ? `1px solid ${reel.glow}30`
-                          : "1px solid rgba(255,255,255,0.06)",
-                        minWidth: 72,
-                      }}
-                    >
-                      <div
-                        className="overflow-hidden rounded-md"
-                        style={{ width: 44, height: 60 }}
-                      >
-                        <img
-                          src={posterFor(reel)}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <span
-                        className="text-center text-[0.42rem] font-semibold uppercase tracking-[0.2em] leading-tight"
-                        style={{
-                          color: active ? reel.glow : "rgba(255,255,255,0.36)",
-                        }}
-                      >
-                        {reel.index}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* ── RIGHT: Info Panel ── */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-              delay: 0.15,
-            }}
-            className="flex flex-col gap-6 lg:pt-2 works-render-scope"
-            style={{
-              contain: "layout paint style",
-              transform: "translateZ(0)",
-            }}
-          >
-            <WorksInfoPanel reel={activeReel} />
-          </motion.div>
         </div>
 
-        {/* ══ BOTTOM NAVIGATION STRIP ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-8 lg:mt-10 works-render-scope"
-          style={{ contain: "layout paint style", transform: "translateZ(0)" }}
-        >
-          <div
-            className="flex items-center justify-between gap-4 rounded-2xl px-5 py-4"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
+        {/* ════════════════════════════════════════════
+            MAIN GRID  (desktop: left grid + right hero)
+                       (mobile:  hero first, grid below)
+            ════════════════════════════════════════════ */}
+        <div className="flex flex-col-reverse gap-5 lg:flex-row lg:gap-5 lg:items-start">
+          {/* ── LEFT: thumbnail grid ─────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="w-full lg:w-[340px] xl:w-[380px] shrink-0"
           >
-            <FilmStripDots count={5} glow={activeReel.glow} />
-
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-1 justify-center px-2">
-              {reels.map((reel, index) => {
-                const active = index === activeIndex;
+            {/*
+              Custom CSS grid — 2-col, auto rows.
+              Cards span different rows to create staggered height effect.
+            */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gridAutoRows: "80px",
+                gap: 8,
+              }}
+            >
+              {reels.map((reel, i) => {
+                const v = reelLayoutVariants[i];
+                // row spans: tall=3, square=2, wide=2
+                const rowSpan = v === "tall" ? 3 : 2;
                 return (
-                  <button
-                    key={reel.id}
-                    type="button"
-                    onClick={() => onSelect(index)}
-                    className="shrink-0 rounded-full transition-all duration-200"
-                    style={{
-                      padding: "6px 14px",
-                      background: active ? `${reel.glow}18` : "transparent",
-                      border: active
-                        ? `1px solid ${reel.glow}38`
-                        : "1px solid transparent",
-                    }}
-                  >
-                    <span
-                      className="block text-[0.43rem] font-semibold uppercase tracking-[0.3em] whitespace-nowrap"
-                      style={{
-                        color: active ? reel.glow : "rgba(255,255,255,0.36)",
-                      }}
-                    >
-                      {reel.index} — {reel.category}
-                    </span>
-                  </button>
+                  <div key={reel.id} style={{ gridRow: `span ${rowSpan}` }}>
+                    <GridCard
+                      reel={reel}
+                      reelIndex={i}
+                      isActive={i === activeIndex}
+                      onClick={handleSelect}
+                      layoutVariant={v}
+                    />
+                  </div>
                 );
               })}
             </div>
 
-            <FilmStripDots count={5} glow={activeReel.glow} />
+            {/* mobile scroll hint */}
+            <p
+              className="mt-4 text-center text-[9px] font-medium uppercase tracking-[0.3em] lg:hidden"
+              style={{ color: "rgba(255,255,255,0.2)" }}
+            >
+              Tap a card to preview
+            </p>
+          </motion.div>
+
+          {/* ── RIGHT: hero player + info ────────────── */}
+          <div className="flex-1 min-w-0 flex flex-col gap-5">
+            {/* ── PLAYER ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.1 }}
+              className="flex w-full justify-center"
+            >
+              <motion.div
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="relative overflow-hidden"
+                style={{
+                  width: "min(100%, 520px, calc(72vh * 9 / 16))",
+                  aspectRatio: "9/16",
+                  borderRadius: 24,
+                  padding: 10,
+                  background: `linear-gradient(145deg, rgba(255,255,255,0.11), ${activeReel.glow}20 28%, rgba(255,255,255,0.035) 54%, rgba(0,0,0,0.9))`,
+                  border: `1px solid ${activeReel.glow}42`,
+                  boxShadow: `0 0 0 1px rgba(255,255,255,0.035), 0 34px 90px rgba(0,0,0,0.78), 0 0 76px ${activeReel.glow}20`,
+                }}
+              >
+                <div
+                  className="relative h-full w-full overflow-hidden bg-black"
+                  style={{
+                    borderRadius: 18,
+                    border: "1px solid rgba(255,255,255,0.085)",
+                    boxShadow: `inset 0 0 0 1px rgba(0,0,0,0.7), inset 0 0 32px ${activeReel.glow}10`,
+                  }}
+                >
+                  <CloudinaryVideoPlayer reel={activeReel} />
+
+                  {/* corner badge */}
+                  <div
+                    className="absolute top-4 left-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-[0.28em]"
+                    style={{
+                      background: "rgba(0,0,0,0.55)",
+                      border: `1px solid ${activeReel.glow}35`,
+                      color: activeReel.glow,
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <Sparkles size={8} />
+                    {activeReel.category}
+                  </div>
+
+                  {/* index ghost */}
+                  <div
+                    className="absolute bottom-5 right-5 z-5 font-bold leading-none tracking-[-0.1em] pointer-events-none select-none"
+                    style={{
+                      fontFamily: "'General Sans', sans-serif",
+                      fontSize: "clamp(3.5rem, 8vw, 6rem)",
+                      color: `${activeReel.glow}14`,
+                    }}
+                  >
+                    {activeReel.index}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* ── INFO PANEL ── */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeReel.id + "-info"}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                className="rounded-2xl p-5 flex flex-col gap-4"
+                style={{
+                  background: "rgba(255,255,255,0.025)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                {/* top row */}
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p
+                      className="text-[9px] font-bold uppercase tracking-[0.4em] mb-1"
+                      style={{ color: "rgba(255,255,255,0.3)" }}
+                    >
+                      {activeReel.index} /{" "}
+                      {reels.length < 10 ? "0" + reels.length : reels.length}
+                    </p>
+                    <h3
+                      className="text-white font-bold leading-tight tracking-[-0.04em]"
+                      style={{
+                        fontFamily: "'General Sans', sans-serif",
+                        fontSize: "clamp(1.1rem, 2.5vw, 1.55rem)",
+                      }}
+                    >
+                      {activeReel.title}
+                    </h3>
+                    <p
+                      className="mt-1 text-[10px] font-semibold uppercase tracking-[0.3em]"
+                      style={{ color: activeReel.glow }}
+                    >
+                      {activeReel.clientType} · {activeReel.client}
+                    </p>
+                  </div>
+
+                  {/* YT link */}
+                  <motion.a
+                    href={activeReel.shortUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-[0.25em] transition-all duration-200"
+                    style={{
+                      background: `${activeReel.glow}16`,
+                      border: `1px solid ${activeReel.glow}40`,
+                      color: activeReel.glow,
+                    }}
+                    whileHover={{
+                      background: `${activeReel.glow}28`,
+                      boxShadow: `0 0 20px ${activeReel.glow}25`,
+                    }}
+                    whileTap={{ scale: 0.96 }}
+                  >
+                    <ArrowUpRight size={11} />
+                    View Reel
+                  </motion.a>
+                </div>
+
+                {/* note */}
+                <p
+                  className="leading-relaxed"
+                  style={{ fontSize: 13, color: "rgba(255,255,255,0.45)" }}
+                >
+                  {activeReel.note}
+                </p>
+
+                {/* tags + nav row */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  {/* tags */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {activeReel.tags.map((t) => (
+                      <span
+                        key={t}
+                        className="px-2.5 py-1 rounded-full text-[8.5px] font-bold uppercase tracking-[0.22em]"
+                        style={{
+                          background: `${activeReel.glow}0e`,
+                          border: `1px solid ${activeReel.glow}28`,
+                          color: `${activeReel.glow}cc`,
+                        }}
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* prev / next */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveIndex(
+                          (i) => (i - 1 + reels.length) % reels.length,
+                        )
+                      }
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white/50 transition-all duration-200 hover:text-white"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                      }}
+                      aria-label="Previous"
+                    >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M7.5 2L3.5 6L7.5 10"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+
+                    {/* dot indicators */}
+                    <div className="flex items-center gap-1">
+                      {reels.map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setActiveIndex(i)}
+                          className="rounded-full transition-all duration-300"
+                          style={{
+                            width: i === activeIndex ? 16 : 4,
+                            height: 4,
+                            background:
+                              i === activeIndex
+                                ? activeReel.glow
+                                : "rgba(255,255,255,0.18)",
+                          }}
+                          aria-label={`Reel ${i + 1}`}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveIndex((i) => (i + 1) % reels.length)
+                      }
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white/50 transition-all duration-200 hover:text-white"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                      }}
+                      aria-label="Next"
+                    >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M4.5 2L8.5 6L4.5 10"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </motion.div>
+        </div>
+
+        {/* ════════════════════════════════════════════
+            MOBILE: horizontal scroll strip (xs only)
+            Hidden on lg+
+            ════════════════════════════════════════════ */}
+        <div className="mt-6 lg:hidden">
+          <div
+            className="flex gap-2.5 overflow-x-auto pb-2"
+            style={{
+              scrollSnapType: "x mandatory",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {reels.map((reel, i) => (
+              <motion.button
+                key={reel.id}
+                type="button"
+                onClick={() => handleSelect(i)}
+                className="shrink-0 flex flex-col items-center gap-1.5"
+                style={{ scrollSnapAlign: "start", outline: "none" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div
+                  className="relative overflow-hidden"
+                  style={{
+                    width: 56,
+                    height: 80,
+                    borderRadius: 8,
+                    border:
+                      i === activeIndex
+                        ? `1.5px solid ${reel.glow}80`
+                        : "1.5px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  <img
+                    src={getPosterUrl(reel.videoUrl)}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  {i === activeIndex && (
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `linear-gradient(135deg, ${reel.glow}22, transparent)`,
+                      }}
+                    />
+                  )}
+                </div>
+                <span
+                  className="text-[8px] font-bold tracking-[0.18em]"
+                  style={{
+                    color:
+                      i === activeIndex ? reel.glow : "rgba(255,255,255,0.3)",
+                  }}
+                >
+                  {reel.index}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
 }
-
-/* ══════════════════════════════════════════════════════════════════════════
-   VIDEO PLAYER
-══════════════════════════════════════════════════════════════════════════ */
-function VideoPlayer({
-  reel,
-  poster,
-  onPrev,
-  onNext,
-  isMuted,
-  isSectionVisible,
-  onToggleMute,
-}: {
-  reel: ReelItem;
-  poster: string;
-  onPrev: () => void;
-  onNext: () => void;
-  isMuted: boolean;
-  isSectionVisible: boolean;
-  onToggleMute: () => void;
-}) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const progressBarRef = useRef<HTMLDivElement | null>(null);
-  const currentTimeRef = useRef<HTMLSpanElement | null>(null);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    playbackMetricsStore.reset();
-    setIsReady(false);
-    if (progressBarRef.current) {
-      progressBarRef.current.style.transform = "translate3d(0, 0, 0) scaleX(0)";
-    }
-    if (currentTimeRef.current) {
-      currentTimeRef.current.textContent = "0:00";
-    }
-    video.pause();
-    video.muted = true;
-  }, [reel.id]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = isMuted;
-    if (!isSectionVisible) {
-      video.pause();
-      return;
-    }
-
-    if (isReady) {
-      video.play().catch(() => undefined);
-    }
-  }, [isMuted, isReady, isSectionVisible]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (!isSectionVisible) {
-      video.pause();
-      return;
-    }
-
-    if (isReady) {
-      video.play().catch(() => undefined);
-    }
-  }, [isReady, isSectionVisible]);
-
-  const handleTimeUpdate = useCallback(
-    (e: SyntheticEvent<HTMLVideoElement>) => {
-      const video = e.currentTarget;
-      if (!video.duration) return;
-      const nextProgress = Math.min(
-        100,
-        (video.currentTime / video.duration) * 100,
-      );
-      const minutes = Math.floor(video.currentTime / 60);
-      const seconds = Math.floor(video.currentTime % 60)
-        .toString()
-        .padStart(2, "0");
-      const nextCurrentTime = `${minutes}:${seconds}`;
-      if (progressBarRef.current) {
-        progressBarRef.current.style.transform = `translate3d(0, 0, 0) scaleX(${nextProgress / 100})`;
-      }
-      if (currentTimeRef.current) {
-        currentTimeRef.current.textContent = nextCurrentTime;
-      }
-      playbackMetricsStore.setSnapshot({
-        progress: nextProgress,
-        currentTime: nextCurrentTime,
-      });
-    },
-    [],
-  );
-
-  const handleLoadedData = useCallback(
-    (e: SyntheticEvent<HTMLVideoElement>) => {
-      setIsReady(true);
-      if (isSectionVisible) {
-        e.currentTarget.play().catch(() => undefined);
-      }
-    },
-    [isSectionVisible],
-  );
-
-  return (
-    <div className="w-full" style={{ maxWidth: "clamp(460px, 30vw, 620px)" }}>
-      {/* Glow halo behind player */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={reel.id + "-halo"}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.9 }}
-          className="works-halo-layer pointer-events-none absolute"
-          style={{
-            width: "110%",
-            height: "110%",
-            top: "-5%",
-            left: "-5%",
-            background: `radial-gradient(circle at 50% 48%, ${reel.glow}1a 0%, transparent 65%)`,
-            filter: "blur(40px)",
-          }}
-        />
-      </AnimatePresence>
-
-      {/* ── The phone-style frame ── */}
-      <div
-        className="works-video-shell relative mx-auto overflow-hidden"
-        style={{
-          borderRadius: "2rem",
-          border: "1px solid rgba(255,255,255,0.1)",
-          background: "#050505",
-          boxShadow: `0 40px 100px rgba(0,0,0,0.9), 0 0 0 1px ${reel.glow}14`,
-        }}
-      >
-        {/* top chrome bar */}
-        <div
-          className="flex items-center justify-between px-4 py-3"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-        >
-          <div className="flex items-center gap-2">
-            <motion.span
-              animate={{ opacity: [1, 0.4, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-block h-2 w-2 rounded-full"
-              style={{
-                background: reel.glow,
-                boxShadow: `0 0 10px ${reel.glow}88`,
-              }}
-            />
-            <span className="text-[0.44rem] font-semibold uppercase tracking-[0.38em] text-white/40">
-              {reel.category}
-            </span>
-          </div>
-          <span className="font-mono text-[0.42rem] text-white/24">
-            reel {reel.index} / {reels.length.toString().padStart(2, "0")}
-          </span>
-        </div>
-
-        {/* ── Video area — strictly 9:16 ── */}
-        <div
-          className="relative w-full overflow-hidden bg-black"
-          style={{ aspectRatio: "9 / 16" }}
-        >
-          <ScanlineOverlay />
-
-          {/* Poster */}
-          <img
-            src={poster}
-            alt={reel.title}
-            className="absolute inset-0 h-full w-full object-cover object-center"
-            draggable={false}
-          />
-
-          {/* Video */}
-          <video
-            key={reel.id}
-            ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500"
-            style={{ opacity: isReady ? 1 : 0 }}
-            src={reel.src}
-            muted
-            loop={isSectionVisible}
-            playsInline
-            preload="metadata"
-            poster={poster}
-            onLoadedData={handleLoadedData}
-            onTimeUpdate={handleTimeUpdate}
-          />
-
-          {/* Loading spinner */}
-          {!isReady && (
-            <div className="absolute inset-0 z-20 grid place-items-center bg-black/20">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-                className="h-9 w-9 rounded-full border-2 border-transparent"
-                style={{ borderTopColor: reel.glow }}
-              />
-            </div>
-          )}
-
-          {/* top-left badge */}
-          <div
-            className="absolute left-4 top-4 z-20 rounded-full px-3 py-1.5 text-[0.42rem] font-semibold uppercase tracking-[0.32em] text-white/80 backdrop-blur-md"
-            style={{
-              background: "rgba(0,0,0,0.54)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            {reel.client}
-          </div>
-
-          {/* top-right badge */}
-          <div
-            className="absolute right-4 top-4 z-20 rounded-full px-3 py-1.5 text-[0.42rem] font-semibold uppercase tracking-[0.32em] backdrop-blur-md"
-            style={{
-              background: "rgba(0,0,0,0.54)",
-              border: `1px solid ${reel.glow}30`,
-              color: reel.glow,
-            }}
-          >
-            9:16
-          </div>
-
-          {/* bottom gradient info */}
-          <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black via-black/70 to-transparent px-5 pb-5 pt-16">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={reel.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.28 }}
-              >
-                <p
-                  className="text-[0.42rem] font-semibold uppercase tracking-[0.36em]"
-                  style={{ color: `${reel.glow}cc` }}
-                >
-                  {reel.clientType}
-                </p>
-                <h3
-                  className="mt-1 font-display text-[1.35rem] font-semibold leading-tight tracking-[-0.05em] text-white"
-                  style={{ fontFamily: "'General Sans', sans-serif" }}
-                >
-                  {reel.title}
-                </h3>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* ← → nav buttons */}
-          <button
-            type="button"
-            onClick={onPrev}
-            aria-label="Previous reel"
-            className="absolute left-3 top-1/2 z-30 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full transition-all duration-200"
-            style={{
-              background: "rgba(0,0,0,0.52)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <ChevronLeft size={16} className="text-white/70" />
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            aria-label="Next reel"
-            className="absolute right-3 top-1/2 z-30 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full transition-all duration-200"
-            style={{
-              background: "rgba(0,0,0,0.52)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <ChevronRight size={16} className="text-white/70" />
-          </button>
-        </div>
-
-        {/* ── Bottom controls bar ── */}
-        <div
-          className="px-4 py-4 space-y-3"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
-        >
-          {/* progress bar */}
-          <div className="space-y-1.5">
-            <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
-              <div
-                ref={progressBarRef}
-                className="works-progress-fill h-full w-full rounded-full transition-transform duration-200"
-                style={{
-                  background: `linear-gradient(90deg, ${reel.glow}80, ${reel.glow})`,
-                }}
-              />
-            </div>
-            <div className="flex items-center justify-between text-[0.42rem] font-semibold uppercase tracking-[0.3em] text-white/28">
-              <span ref={currentTimeRef}>0:00</span>
-              <span>{reel.duration}</span>
-            </div>
-          </div>
-
-          {/* mute + play hint */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Play size={10} className="text-white/24" />
-              <span className="text-[0.42rem] font-medium text-white/28">
-                Auto-playing
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={onToggleMute}
-              aria-label={isMuted ? "Unmute reel" : "Mute reel"}
-              className="flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.44rem] font-semibold uppercase tracking-[0.28em] transition-all duration-200"
-              style={{
-                background: isMuted
-                  ? "rgba(255,255,255,0.04)"
-                  : `${reel.glow}18`,
-                border: isMuted
-                  ? "1px solid rgba(255,255,255,0.1)"
-                  : `1px solid ${reel.glow}40`,
-                color: isMuted ? "rgba(255,255,255,0.5)" : reel.glow,
-              }}
-            >
-              {isMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
-              {isMuted ? "Unmute" : "Mute"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function WorksInfoPanel({ reel }: { reel: ReelItem }) {
-  const progressBarRef = useRef<HTMLDivElement | null>(null);
-  const currentTimeRef = useRef<HTMLSpanElement | null>(null);
-  const snapshot = playbackMetricsStore.getSnapshot();
-
-  useEffect(() => {
-    const sync = () => {
-      const { progress, currentTime } = playbackMetricsStore.getSnapshot();
-      if (progressBarRef.current) {
-        progressBarRef.current.style.transform = `translate3d(0, 0, 0) scaleX(${progress / 100})`;
-      }
-      if (currentTimeRef.current) {
-        currentTimeRef.current.textContent = currentTime;
-      }
-    };
-
-    sync();
-    return playbackMetricsStore.subscribe(sync);
-  }, [reel.id]);
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={reel.id}
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -12 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="space-y-6"
-      >
-        {/* client badge + reel ornament */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[0.44rem] font-semibold uppercase tracking-[0.44em] text-white/30">
-              Client
-            </p>
-            <h3
-              className="mt-1 font-display text-[1.7rem] font-semibold leading-[0.95] tracking-[-0.05em] text-white"
-              style={{ fontFamily: "'General Sans', sans-serif" }}
-            >
-              {reel.client}
-            </h3>
-            <p
-              className="mt-1.5 text-[0.5rem] font-semibold uppercase tracking-[0.38em]"
-              style={{ color: reel.glow }}
-            >
-              {reel.clientType}
-            </p>
-          </div>
-          <ReelOrnament glow={reel.glow} />
-        </div>
-
-        {/* title */}
-        <div>
-          <p className="text-[0.44rem] font-semibold uppercase tracking-[0.42em] text-white/30">
-            Project
-          </p>
-          <p className="mt-1 text-[1rem] font-semibold leading-snug tracking-[-0.03em] text-white/90">
-            {reel.title}
-          </p>
-        </div>
-
-        {/* note */}
-        <p className="text-[0.85rem] leading-7 text-white/50">{reel.note}</p>
-
-        {/* tags */}
-        <div className="flex flex-wrap gap-2">
-          {reel.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full border px-3 py-1 text-[0.4rem] font-semibold uppercase tracking-[0.28em]"
-              style={{
-                borderColor: `${reel.glow}28`,
-                background: `${reel.glow}0c`,
-                color: `${reel.glow}cc`,
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* progress + meta */}
-        <div
-          className="space-y-3 rounded-2xl p-4"
-          style={{
-            background: "rgba(255,255,255,0.025)",
-            border: "1px solid rgba(255,255,255,0.07)",
-          }}
-        >
-          <div className="flex items-center justify-between text-[0.44rem] font-semibold uppercase tracking-[0.32em] text-white/32">
-            <span ref={currentTimeRef}>{snapshot.currentTime}</span>
-            <span>
-              {reel.category} · {reel.duration}
-            </span>
-          </div>
-          {/* progress bar */}
-          <div className="h-[3px] overflow-hidden rounded-full bg-white/10">
-            <motion.div
-              ref={progressBarRef}
-              className="works-progress-fill h-full rounded-full"
-              style={{
-                width: "100%",
-                background: `linear-gradient(90deg, ${reel.glow}88, ${reel.glow})`,
-              }}
-              transition={{ duration: 0.2 }}
-            />
-          </div>
-          {/* film strip dots for decoration */}
-          <FilmStripDots count={9} glow={reel.glow} />
-        </div>
-
-        {/* reel index */}
-        <p
-          className="font-display text-[4.5rem] font-semibold leading-none tracking-[-0.1em]"
-          style={{
-            color: `${reel.glow}18`,
-            fontFamily: "'General Sans', sans-serif",
-          }}
-        >
-          {reel.index}
-        </p>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
-export default RecentWorksSection;
