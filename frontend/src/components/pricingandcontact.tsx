@@ -243,7 +243,7 @@ function PricingCard({
 
       {/* Popular badge */}
       {plan.popular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute -top-0 left-1/2 -translate-x-1/2 z-10">
           <span
             className="px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase"
             style={{

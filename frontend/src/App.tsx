@@ -4,7 +4,8 @@ import { BackgroundEffects } from "./components/BackgroundEffects";
 import { HeroSection } from "./components/HeroSection";
 import { LoaderScreen } from "./components/LoaderScreen";
 import { Navbar } from "./components/Navbar";
-import { PortfolioSectionsClean } from "./components/PortfolioSectionsClean";
+import { AboutSection } from "./components/PortfolioSectionsClean";
+import RecentWorksSection from "./components/RecentWorksSection";
 import { ToolsAndServices } from "./components/ToolsandService";
 import { PricingContactFooter } from "./components/pricingandcontact";
 
@@ -31,7 +32,8 @@ function App() {
           >
             <Navbar />
             <HeroSection />
-            <PortfolioSectionsClean />
+            <AboutSection />
+            <RecentWorksSection />
             <ToolsAndServices />
             <PricingContactFooter />
           </motion.div>
