@@ -3,9 +3,11 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 import { ArrowUpRight, Play } from "lucide-react";
 import { useEffect, useRef, type PointerEvent } from "react";
+import { useCountUp } from "../hooks/useCountUp";
 
 /* ── Cloudinary reels ──────────────────────────────────────────────────────── */
 const MAIN_REEL =
@@ -45,10 +47,10 @@ function WordReveal({
         <span key={i} className="overflow-hidden inline-block">
           <motion.span
             className="inline-block"
-            initial={{ y: "110%", opacity: 0 }}
-            animate={{ y: "0%", opacity: 1 }}
+            initial={{ y: "110%", opacity: 0, filter: "blur(8px)" }}
+            animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
             transition={{
-              duration: 0.85,
+              duration: 0.9,
               delay: delay + i * 0.075,
               ease: [0.16, 1, 0.3, 1],
             }}
@@ -76,10 +78,10 @@ function CharReveal({
       {text.split("").map((ch, i) => (
         <motion.span
           key={i}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{
-            duration: 0.4,
+            duration: 0.5,
             delay: delay + i * 0.03,
             ease: [0.22, 1, 0.36, 1],
           }}
@@ -89,6 +91,32 @@ function CharReveal({
         </motion.span>
       ))}
     </span>
+  );
+}
+
+/* ── Count-up stat ─────────────────────────────────────────────────────────── */
+function StatItem({ value, label, delay }: { value: string; label: string; delay: number }) {
+  const { display, ref, started } = useCountUp(value, { duration: 2000 });
+  return (
+    <motion.div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, delay }}
+    >
+      <p
+        className={`font-display text-[clamp(1.8rem,3vw,2.8rem)] font-black
+                    leading-none tracking-[-0.06em] ${started ? "text-white" : "text-white/20"}`}
+      >
+        {display}
+      </p>
+      <p
+        className="mt-1.5 text-[0.44rem] font-medium uppercase
+                    tracking-[0.42em] text-white/34"
+      >
+        {label}
+      </p>
+    </motion.div>
   );
 }
 
@@ -105,15 +133,20 @@ function MagneticButton({
   const ref = useRef<HTMLAnchorElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 200, damping: 20 });
-  const sy = useSpring(y, { stiffness: 200, damping: 20 });
+  const sx = useSpring(x, { stiffness: 250, damping: 18 });
+  const sy = useSpring(y, { stiffness: 250, damping: 18 });
+
+  const scaleX = useSpring(x, { stiffness: 150, damping: 15 });
+  const scaleY = useSpring(y, { stiffness: 150, damping: 15 });
 
   const onMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    x.set((e.clientX - rect.left - rect.width / 2) * 0.28);
-    y.set((e.clientY - rect.top - rect.height / 2) * 0.28);
+    const px = (e.clientX - rect.left - rect.width / 2) * 0.35;
+    const py = (e.clientY - rect.top - rect.height / 2) * 0.35;
+    x.set(px);
+    y.set(py);
   };
 
   const onLeave = () => {
@@ -125,9 +158,11 @@ function MagneticButton({
     <motion.a
       ref={ref}
       href={href}
+      data-cursor="magnetic"
       style={{ x: sx, y: sy }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
+      whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.96 }}
       className={
         primary
@@ -173,20 +208,18 @@ function TiltVideoCard() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const smoothX = useSpring(pointerX, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.5,
-  });
-  const smoothY = useSpring(pointerY, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.5,
-  });
-  const rotateX = useTransform(smoothY, [-0.5, 0.5], [5, -5]);
-  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-5, 5]);
-  const glowX = useTransform(smoothX, [-0.5, 0.5], [20, 80]);
-  const glowY = useTransform(smoothY, [-0.5, 0.5], [20, 80]);
+  const smoothX = useSpring(pointerX, { stiffness: 100, damping: 30, mass: 0.8 });
+  const smoothY = useSpring(pointerY, { stiffness: 100, damping: 30, mass: 0.8 });
+  const rotateX = useTransform(smoothY, [-0.5, 0.5], [4, -4]);
+  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-4, 4]);
+  const translateZ = useTransform(
+    useSpring(
+      useMotionValue(0),
+      { stiffness: 200, damping: 25 },
+    ),
+    [0, 1],
+    [0, 20],
+  );
 
   const handlePointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -194,9 +227,14 @@ function TiltVideoCard() {
     pointerY.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
+  const handlePointerEnter = () => {
+    translateZ.set(1);
+  };
+
   const handlePointerLeave = () => {
     pointerX.set(0);
     pointerY.set(0);
+    translateZ.set(0);
   };
 
   useEffect(() => {
@@ -224,20 +262,21 @@ function TiltVideoCard() {
       ref={cardRef}
       className="relative w-full"
       style={{ perspective: "1200px" }}
-      initial={{ opacity: 0, x: 40, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, x: 40, scale: 0.95, filter: "blur(6px)" }}
+      animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+      transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
       onPointerMove={handlePointerMove}
+      onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
     >
       {/* Glow behind card */}
       <motion.div
-        className="absolute -inset-6 rounded-[2.5rem] opacity-40 blur-3xl"
+        className="absolute -inset-6 rounded-[2.5rem] opacity-30 blur-3xl"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.25), transparent)",
-          left: useTransform(glowX, [20, 80], ["-5%", "5%"]),
-          top: useTransform(glowY, [20, 80], ["-5%", "5%"]),
+            "radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.2), transparent)",
+          x: useTransform(smoothX, [-0.5, 0.5], [-8, 8]),
+          y: useTransform(smoothY, [-0.5, 0.5], [-8, 8]),
         }}
       />
 
@@ -245,7 +284,12 @@ function TiltVideoCard() {
       <motion.div
         className="relative overflow-hidden rounded-[2rem] border border-white/10
                    bg-black shadow-[0_30px_120px_rgba(0,0,0,0.7)]"
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        style={{
+          rotateX,
+          rotateY,
+          z: translateZ,
+          transformStyle: "preserve-3d",
+        }}
       >
         {/* Background video (second reel) */}
         <div className="absolute inset-0 overflow-hidden opacity-30">
@@ -319,46 +363,35 @@ function TiltVideoCard() {
    MAIN EXPORT
    ══════════════════════════════════════════════════════════════════════════════ */
 export function HeroSection() {
-  /* Magnetic cursor glow */
-  const cursorX = useMotionValue(-200);
-  const cursorY = useMotionValue(-200);
-  const springX = useSpring(cursorX, { stiffness: 120, damping: 22 });
-  const springY = useSpring(cursorY, { stiffness: 120, damping: 22 });
+  /* ── Parallax mouse tracking ───────────────────────────────────────────── */
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const smoothMouseX = useSpring(mouseX, { stiffness: 60, damping: 30 });
+  const smoothMouseY = useSpring(mouseY, { stiffness: 60, damping: 30 });
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+      mouseX.set(e.clientX / window.innerWidth);
+      mouseY.set(e.clientY / window.innerHeight);
     };
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
-  }, [cursorX, cursorY]);
+  }, [mouseX, mouseY]);
 
   return (
     <section
       id="home"
       className="relative z-10 flex min-h-screen flex-col overflow-hidden bg-[#050505]"
     >
-      {/* ── Custom cursor glow ─────────────────────────────────────────────── */}
-      <motion.div
-        className="pointer-events-none fixed z-50 hidden h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full md:block"
-        style={{
-          x: springX,
-          y: springY,
-          background:
-            "radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 68%)",
-        }}
-      />
-
-      {/* ── BG atmosphere ─────────────────────────────────────────────────── */}
-      <HeroBg />
+      {/* ── BG atmosphere (with parallax) ──────────────────────────────────── */}
+      <HeroBg mouseX={smoothMouseX} mouseY={smoothMouseY} />
 
       {/* ── CONTENT ───────────────────────────────────────────────────────── */}
       <div className="relative z-10 mx-auto flex w-full max-w-[1560px] flex-1 flex-col px-[clamp(1.5rem,5vw,6rem)]">
         {/* Eyebrow */}
         <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: -16, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-between pt-[clamp(7rem,11vw,9.5rem)]"
         >
@@ -376,8 +409,8 @@ export function HeroSection() {
             />
           </div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.85, filter: "blur(4px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 0.6, delay: 1.2 }}
             className="hidden items-center gap-2.5 rounded-full border border-[#d4af37]/16
                        bg-[#d4af37]/[0.04] px-4 py-2 backdrop-blur-xl sm:flex"
@@ -411,8 +444,8 @@ export function HeroSection() {
                   <span className="overflow-hidden inline-block">
                     <motion.span
                       className="inline-block gold-gradient-text"
-                      initial={{ y: "110%", opacity: 0 }}
-                      animate={{ y: "0%", opacity: 1 }}
+                      initial={{ y: "110%", opacity: 0, filter: "blur(8px)" }}
+                      animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
                       transition={{
                         duration: 0.9,
                         delay: 0.72,
@@ -429,24 +462,16 @@ export function HeroSection() {
                 className="mt-6 h-px bg-gradient-to-r from-[#d4af37]/50 via-[#d4af37]/20 to-transparent"
                 initial={{ scaleX: 0, originX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{
-                  duration: 1.1,
-                  delay: 0.9,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
+                transition={{ duration: 1.1, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
                 style={{ maxWidth: "32rem" }}
               />
 
               <motion.p
                 className="mt-6 max-w-[32rem] text-[clamp(0.9rem,1.2vw,1.05rem)]
                            leading-[1.9] text-white/52"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.75,
-                  delay: 1.0,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
+                initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.75, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
               >
                 Professional video editing for content creators, personal
                 projects, and every story in between. From YouTube deep dives to
@@ -459,11 +484,7 @@ export function HeroSection() {
                 className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.7,
-                  delay: 1.1,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
+                transition={{ duration: 0.7, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
               >
                 <MagneticButton href="#works" primary>
                   View My Work
@@ -474,7 +495,7 @@ export function HeroSection() {
                 </MagneticButton>
               </motion.div>
 
-              {/* Stats */}
+              {/* Stats with count-up */}
               <motion.div
                 className="mt-12 flex flex-wrap items-center gap-8 border-t border-white/[0.07] pt-8 sm:gap-14"
                 initial={{ opacity: 0 }}
@@ -482,25 +503,7 @@ export function HeroSection() {
                 transition={{ duration: 0.8, delay: 1.3 }}
               >
                 {STATS.map(({ value, label }, i) => (
-                  <motion.div
-                    key={label}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.55, delay: 1.4 + i * 0.1 }}
-                  >
-                    <p
-                      className="font-display text-[clamp(1.8rem,3vw,2.8rem)] font-black
-                                  leading-none tracking-[-0.06em] text-white"
-                    >
-                      {value}
-                    </p>
-                    <p
-                      className="mt-1.5 text-[0.44rem] font-medium uppercase
-                                  tracking-[0.42em] text-white/34"
-                    >
-                      {label}
-                    </p>
-                  </motion.div>
+                  <StatItem key={label} value={value} label={label} delay={1.4 + i * 0.1} />
                 ))}
               </motion.div>
             </div>
@@ -511,14 +514,12 @@ export function HeroSection() {
             </div>
           </div>
         </div>
-
-
       </div>
 
       {/* ── SCROLLING TICKER ──────────────────────────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, filter: "blur(4px)" }}
+        animate={{ opacity: 1, filter: "blur(0px)" }}
         transition={{ duration: 0.9, delay: 1.5 }}
         className="relative overflow-hidden border-t border-white/[0.045] bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.003))] py-[15px]"
       >
@@ -546,15 +547,28 @@ export function HeroSection() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BACKGROUND ATMOSPHERE
+   BACKGROUND ATMOSPHERE (with mouse parallax)
    ══════════════════════════════════════════════════════════════════════════════ */
-function HeroBg() {
+function HeroBg({
+  mouseX,
+  mouseY,
+}: {
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+}) {
+  const orb1X = useTransform(mouseX, [0, 1], ["-22%", "-14%"]);
+  const orb1Y = useTransform(mouseY, [0, 1], ["-16%", "-8%"]);
+  const orb2X = useTransform(mouseX, [0, 1], ["4%", "-4%"]);
+  const orb2Y = useTransform(mouseY, [0, 1], ["4%", "-4%"]);
+
   return (
     <div className="pointer-events-none absolute inset-0">
-      {/* Gold orbs */}
+      {/* Gold orb 1 — parallax */}
       <motion.div
-        className="absolute -left-[18%] -top-[12%] h-[60rem] w-[60rem] rounded-full"
+        className="absolute h-[60rem] w-[60rem] rounded-full"
         style={{
+          left: orb1X,
+          top: orb1Y,
           background:
             "radial-gradient(circle, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.03) 38%, transparent 68%)",
           filter: "blur(90px)",
@@ -562,9 +576,13 @@ function HeroBg() {
         animate={{ opacity: [0.5, 0.88, 0.5], scale: [0.97, 1.04, 0.97] }}
         transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
       />
+
+      {/* Gold orb 2 — parallax */}
       <motion.div
-        className="absolute -bottom-[14%] -right-[10%] h-[48rem] w-[48rem] rounded-full"
+        className="absolute h-[48rem] w-[48rem] rounded-full"
         style={{
+          right: orb2X,
+          bottom: orb2Y,
           background:
             "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 66%)",
           filter: "blur(80px)",
@@ -577,51 +595,69 @@ function HeroBg() {
           delay: 2,
         }}
       />
+
+      {/* Static layers */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_52%_40%,rgba(212,175,55,0.045),transparent_50%)]" />
       <div className="hero-grain absolute inset-0" />
       <div className="absolute inset-0 shadow-[inset_0_0_300px_rgba(0,0,0,0.9),inset_0_0_100px_rgba(212,175,55,0.018)]" />
       <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-black/65 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#050505] to-transparent" />
-      <HeroParticles />
+
+      {/* Particles with parallax */}
+      <HeroParticles mouseX={mouseX} mouseY={mouseY} />
     </div>
   );
 }
 
-/* ── Particles ─────────────────────────────────────────────────────────────── */
-function HeroParticles() {
+/* ── Particles with parallax ───────────────────────────────────────────────── */
+function HeroParticles({
+  mouseX,
+  mouseY,
+}: {
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+}) {
   const pts = [
-    { left: "12%", top: "20%", size: 2.2, delay: 0 },
-    { left: "24%", top: "65%", size: 1.5, delay: 0.8 },
-    { left: "38%", top: "14%", size: 2.6, delay: 1.4 },
-    { left: "52%", top: "74%", size: 1.8, delay: 0.3 },
-    { left: "63%", top: "28%", size: 2.0, delay: 1.0 },
-    { left: "75%", top: "55%", size: 1.4, delay: 0.6 },
-    { left: "84%", top: "18%", size: 2.4, delay: 1.7 },
-    { left: "90%", top: "72%", size: 1.6, delay: 0.4 },
+    { left: "12%", top: "20%", size: 2.2, delay: 0, depth: 0.4 },
+    { left: "24%", top: "65%", size: 1.5, delay: 0.8, depth: 0.6 },
+    { left: "38%", top: "14%", size: 2.6, delay: 1.4, depth: 0.3 },
+    { left: "52%", top: "74%", size: 1.8, delay: 0.3, depth: 0.5 },
+    { left: "63%", top: "28%", size: 2.0, delay: 1.0, depth: 0.35 },
+    { left: "75%", top: "55%", size: 1.4, delay: 0.6, depth: 0.55 },
+    { left: "84%", top: "18%", size: 2.4, delay: 1.7, depth: 0.45 },
+    { left: "90%", top: "72%", size: 1.6, delay: 0.4, depth: 0.5 },
   ];
+
   return (
     <>
-      {pts.map((p, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            left: p.left,
-            top: p.top,
-            width: p.size,
-            height: p.size,
-            background: "rgba(212,175,55,0.5)",
-            filter: "blur(0.3px)",
-          }}
-          animate={{ y: [-7, 10, -7], opacity: [0.06, 0.45, 0.06] }}
-          transition={{
-            duration: 7,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
+      {pts.map((p, i) => {
+        const pX = useTransform(mouseX, [0, 1], [p.depth * -8, p.depth * 8]);
+        const pY = useTransform(mouseY, [0, 1], [p.depth * -8, p.depth * 8]);
+        return (
+          <motion.span
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              left: p.left,
+              top: p.top,
+              width: p.size,
+              height: p.size,
+              background: "rgba(212,175,55,0.5)",
+              filter: "blur(0.3px)",
+              x: pX,
+              y: pY,
+            }}
+            animate={{ y: [-7, 10, -7], opacity: [0.06, 0.45, 0.06] }}
+            transition={{
+              duration: 7,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        );
+      })}
     </>
   );
 }
+
