@@ -95,7 +95,15 @@ function CharReveal({
 }
 
 /* ── Count-up stat ─────────────────────────────────────────────────────────── */
-function StatItem({ value, label, delay }: { value: string; label: string; delay: number }) {
+function StatItem({
+  value,
+  label,
+  delay,
+}: {
+  value: string;
+  label: string;
+  delay: number;
+}) {
   const { display, ref, started } = useCountUp(value, { duration: 2000 });
   return (
     <motion.div
@@ -208,15 +216,20 @@ function TiltVideoCard() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const smoothX = useSpring(pointerX, { stiffness: 100, damping: 30, mass: 0.8 });
-  const smoothY = useSpring(pointerY, { stiffness: 100, damping: 30, mass: 0.8 });
+  const smoothX = useSpring(pointerX, {
+    stiffness: 100,
+    damping: 30,
+    mass: 0.8,
+  });
+  const smoothY = useSpring(pointerY, {
+    stiffness: 100,
+    damping: 30,
+    mass: 0.8,
+  });
   const rotateX = useTransform(smoothY, [-0.5, 0.5], [4, -4]);
   const rotateY = useTransform(smoothX, [-0.5, 0.5], [-4, 4]);
   const translateZ = useTransform(
-    useSpring(
-      useMotionValue(0),
-      { stiffness: 200, damping: 25 },
-    ),
+    useSpring(useMotionValue(0), { stiffness: 200, damping: 25 }),
     [0, 1],
     [0, 20],
   );
@@ -291,18 +304,6 @@ function TiltVideoCard() {
           transformStyle: "preserve-3d",
         }}
       >
-        {/* Background video (second reel) */}
-        <div className="absolute inset-0 overflow-hidden opacity-30">
-          <video
-            src={BG_REEL}
-            className="h-full w-full object-cover blur-xl scale-110"
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
-        </div>
-
         {/* Main video */}
         <div className="relative z-10">
           <video
@@ -462,7 +463,11 @@ export function HeroSection() {
                 className="mt-6 h-px bg-gradient-to-r from-[#d4af37]/50 via-[#d4af37]/20 to-transparent"
                 initial={{ scaleX: 0, originX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 1.1, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  duration: 1.1,
+                  delay: 0.9,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
                 style={{ maxWidth: "32rem" }}
               />
 
@@ -471,7 +476,11 @@ export function HeroSection() {
                            leading-[1.9] text-white/52"
                 initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 0.75, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  duration: 0.75,
+                  delay: 1.0,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
                 Professional video editing for content creators, personal
                 projects, and every story in between. From YouTube deep dives to
@@ -484,7 +493,11 @@ export function HeroSection() {
                 className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  duration: 0.7,
+                  delay: 1.1,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
                 <MagneticButton href="#works" primary>
                   View My Work
@@ -503,7 +516,12 @@ export function HeroSection() {
                 transition={{ duration: 0.8, delay: 1.3 }}
               >
                 {STATS.map(({ value, label }, i) => (
-                  <StatItem key={label} value={value} label={label} delay={1.4 + i * 0.1} />
+                  <StatItem
+                    key={label}
+                    value={value}
+                    label={label}
+                    delay={1.4 + i * 0.1}
+                  />
                 ))}
               </motion.div>
             </div>
@@ -660,4 +678,3 @@ function HeroParticles({
     </>
   );
 }
-
